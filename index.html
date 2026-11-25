@@ -65,7 +65,7 @@
             <div class="border-t border-slate-200 pt-4 space-y-2.5">
                 <div class="flex justify-between items-center flex-wrap gap-2">
                     <h3 class="text-sm font-extrabold text-amber-900">Add New Episode</h3>
-                    <span class="text-[11px] text-slate-500">Paste a direct .mp4 URL (like https://files.catbox.moe/...)</span>
+                    <span class="text-[11px] text-slate-500">Paste a YouTube link (youtu.be/... or youtube.com/watch?v=...) or .mp4 URL</span>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                     <input type="text" id="new-ep-title" placeholder="Episode Title *" class="bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
@@ -73,7 +73,7 @@
                     <input type="number" id="new-ep-price" placeholder="Price NLe (default 10)" value="10" min="1" class="bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
                 </div>
                 <input type="text" id="new-ep-summary" placeholder="Short episode summary..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
-                <input type="url" id="new-ep-url" placeholder="Direct .mp4 Video URL (https://...) *" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
+                <input type="text" id="new-ep-url" placeholder="YouTube Link or Direct .mp4 URL *" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
                 <div class="flex flex-col sm:flex-row gap-2.5">
                     <button onclick="addCustomEpisode()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl py-2.5 px-4 text-xs font-extrabold shadow">
                         + Add Episode to Page
@@ -194,10 +194,10 @@
                 id: "EP1",
                 number: "Episode 1",
                 title: "Episode 1 — Premiere",
-                duration: "06:25",
+                duration: "01:51:05",
                 priceNLe: 10,
                 summary: "Watch Episode 1 of Season 1.",
-                videoUrl: "https://files.catbox.moe/2fa1rz.mp4"
+                videoUrl: "https://youtu.be/OnigT4KtVJY?si=8X53J3Adn9ajdv7p"
             },
             {
                 id: "EP2",
@@ -221,6 +221,82 @@
 
         let selectedOffer = { label: "Full Season Pass (All Episodes)", amount: 25 };
         let ownerUnlocked = false;
+
+        function extractYouTubeId(input) {
+            if (!input) return null;
+            const trimmed = input.trim();
+            if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) return trimmed;
+            try {
+                const url = new URL(trimmed);
+                const host = url.hostname.replace(/^www\./, "");
+                if (host === "youtu.be") {
+                    const id = url.pathname.split("/").filter(Boolean)[0];
+                    return id && /^[a-zA-Z0-9_-]{11}$/.test(id) ? id : null;
+                }
+                if (host === "youtube.com" || host === "m.youtube.com") {
+                    const vParam = url.searchParams.get("v");
+                    if (vParam && /^[a-zA-Z0-9_-]{11}$/.test(vParam)) return vParam;
+                    const parts = url.pathname.split("/").filter(Boolean);
+                    const embedIdx = parts.findIndex(p => p === "embed" || p === "shorts" || p === "live");
+                    if (embedIdx !== -1 && parts[embedIdx + 1] && /^[a-zA-Z0-9_-]{11}$/.test(parts[embedIdx + 1])) {
+                        return parts[embedIdx + 1];
+                    }
+                }
+            } catch (e) {}
+            return null;
+        }
+
+        function isValidVideoSource(input) {
+            if (!input) return false;
+            if (extractYouTubeId(input)) return true;
+            return /^https?:\/\//i.test(input.trim());
+        }
+
+        function renderUnlockedPlayer(ep) {
+            const ytId = extractYouTubeId(ep.videoUrl);
+            if (ytId) {
+                const embedUrl = `https://www.youtube.com/embed/${ytId}?rel=0&playsinline=1`;
+                const watchUrl = `https://youtu.be/${ytId}`;
+                return `
+                    <div class="space-y-2">
+                        <div class="aspect-video w-full bg-slate-950 rounded-xl overflow-hidden border border-emerald-500/40">
+                            <iframe
+                                src="${embedUrl}"
+                                title="${ep.title}"
+                                class="w-full h-full"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                referrerpolicy="strict-origin-when-cross-origin"
+                                allowfullscreen
+                            ></iframe>
+                        </div>
+                        <div class="flex justify-end text-[11px]">
+                            <a href="${watchUrl}" target="_blank" rel="noopener" class="text-emerald-800 hover:underline font-bold">
+                                Open on YouTube ↗
+                            </a>
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="space-y-2">
+                    <div class="aspect-video w-full bg-slate-950 rounded-xl overflow-hidden border border-emerald-500/40">
+                        <video controls playsinline preload="metadata" class="w-full h-full object-cover" onwaiting="document.getElementById('buf-${ep.id}').classList.remove('hidden')" onplaying="document.getElementById('buf-${ep.id}').classList.add('hidden')" onerror="document.getElementById('err-${ep.id}').classList.remove('hidden')">
+                            <source src="${ep.videoUrl}" type="video/mp4">
+                        </video>
+                    </div>
+                    <div class="flex items-center justify-between gap-2 text-[11px]">
+                        <span id="buf-${ep.id}" class="hidden text-amber-800 font-semibold">Buffering...</span>
+                        <a href="${ep.videoUrl}" target="_blank" rel="noopener" class="ml-auto text-emerald-800 hover:underline font-bold">
+                            Open Fast Direct Stream ↗
+                        </a>
+                    </div>
+                    <p id="err-${ep.id}" class="hidden text-[11px] text-amber-800 bg-amber-50 border border-amber-300 rounded-lg p-2">
+                        Inline player could not load. Tap <strong>Open Fast Direct Stream</strong> above.
+                    </p>
+                </div>
+            `;
+        }
 
         function getCustomEpisodes() {
             try {
@@ -265,13 +341,13 @@
 
             if (!title || !videoUrl) {
                 feedback.className = "text-xs font-bold text-red-600";
-                feedback.innerText = "Please enter both an Episode Title and a direct .mp4 Video URL.";
+                feedback.innerText = "Please enter both an Episode Title and a YouTube or .mp4 Video URL.";
                 return;
             }
 
-            if (!/^https?:\/\//i.test(videoUrl)) {
+            if (!isValidVideoSource(videoUrl)) {
                 feedback.className = "text-xs font-bold text-red-600";
-                feedback.innerText = "Video URL must start with https:// or http://.";
+                feedback.innerText = "Enter a valid YouTube link (youtu.be/... or youtube.com/watch?v=...) or a direct https:// video URL.";
                 return;
             }
 
@@ -481,24 +557,7 @@
                             <p class="text-xs text-slate-600">${ep.summary}</p>
                         </div>
 
-                        ${unlocked ? `
-                            <div class="space-y-2">
-                                <div class="aspect-video w-full bg-slate-950 rounded-xl overflow-hidden border border-emerald-500/40">
-                                    <video controls playsinline preload="metadata" class="w-full h-full object-cover" onwaiting="document.getElementById('buf-${ep.id}').classList.remove('hidden')" onplaying="document.getElementById('buf-${ep.id}').classList.add('hidden')" onerror="document.getElementById('err-${ep.id}').classList.remove('hidden')">
-                                        <source src="${ep.videoUrl}" type="video/mp4">
-                                    </video>
-                                </div>
-                                <div class="flex items-center justify-between gap-2 text-[11px]">
-                                    <span id="buf-${ep.id}" class="hidden text-amber-800 font-semibold">Buffering...</span>
-                                    <a href="${ep.videoUrl}" target="_blank" rel="noopener" class="ml-auto text-emerald-800 hover:underline font-bold">
-                                        Open Fast Direct Stream ↗
-                                    </a>
-                                </div>
-                                <p id="err-${ep.id}" class="hidden text-[11px] text-amber-800 bg-amber-50 border border-amber-300 rounded-lg p-2">
-                                    Inline player could not load. Tap <strong>Open Fast Direct Stream</strong> above.
-                                </p>
-                            </div>
-                        ` : `
+                        ${unlocked ? renderUnlockedPlayer(ep) : `
                             <div class="bg-slate-900 text-white rounded-xl p-4 text-center space-y-2.5">
                                 <p class="text-xs font-bold text-amber-300">Locked Episode</p>
                                 <button onclick="openPayModal('${ep.number}: ${ep.title.replace(/'/g, "\\'")}', ${ep.priceNLe})" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 py-2 rounded-xl font-extrabold text-xs transition">
