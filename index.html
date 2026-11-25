@@ -3,616 +3,345 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Series Cinema | Pay in Leones (NLe)</title>
+    <title>Series Cinema</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        body {
-            background: radial-gradient(circle at top, #ffffff 0%, #f8fafc 55%, #eef2f6 100%) !important;
-            color: #0f172a;
-        }
-        .luxury-card {
-            background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(254, 252, 246, 0.98));
-            border: 1px solid rgba(180, 83, 9, 0.28);
-            border-radius: 18px;
-            box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-        }
-        .luxury-gold-title {
-            background: linear-gradient(90deg, #92400e, #b45309, #d97706);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 800;
-        }
-        .yt-crop-iframe {
-            width: 112%;
-            height: 118%;
-            margin-left: -6%;
-            margin-top: -4%;
-        }
-    </style>
 </head>
-<body class="min-h-screen font-sans pb-20">
-
-    <!-- Header -->
-    <header class="bg-white/95 border-b border-amber-600/25 p-4 sticky top-0 z-40 backdrop-blur shadow-sm">
-        <div class="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
-            <div>
-                <h1 class="text-xl font-extrabold luxury-gold-title">Series Cinema</h1>
-                <p class="text-xs text-slate-600 font-medium">Pay in Leones (NLe) • Unlock Code Access</p>
+<body class="bg-slate-900 text-slate-100 min-h-screen">
+    <div class="max-w-xl mx-auto px-4 py-6 space-y-6">
+        <header class="bg-slate-800 border border-slate-700 rounded-2xl p-5 text-center space-y-3 shadow-lg">
+            <h1 class="text-2xl font-extrabold tracking-tight text-amber-400">Series Cinema</h1>
+            <p class="text-sm text-slate-300">Pay in Leones (NLe) • Unlock Code Access</p>
+            <div class="pt-1">
+                <button onclick="openOwnerManager()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-bold transition shadow">
+                    Owner Code Manager
+                </button>
             </div>
-            <button id="owner-btn" onclick="toggleOwnerPanel()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-3.5 py-2 rounded-xl font-bold text-xs shadow transition">
-                Owner Code Manager
-            </button>
-        </div>
-    </header>
+        </header>
 
-    <main class="max-w-5xl mx-auto p-4 space-y-6 mt-2">
+        <main id="episodesContainer" class="space-y-4">
+            <p class="text-center text-slate-400 text-sm py-8">Loading episodes...</p>
+        </main>
+    </div>
 
-        <!-- Owner Code Generator & Episode Manager Panel -->
-        <section id="owner-panel" class="hidden bg-white border-2 border-emerald-600 rounded-2xl p-5 shadow-xl space-y-5">
-            <div class="flex justify-between items-center border-b border-slate-200 pb-2.5">
-                <h2 class="text-base font-extrabold text-emerald-800">Owner Unlock Code Manager</h2>
-                <button onclick="toggleOwnerPanel()" class="text-xs bg-red-600 text-white px-3 py-1 rounded-lg font-bold">Close</button>
-            </div>
-
-            <div class="space-y-3">
-                <p class="text-xs text-slate-600">
-                    Generate a code after verifying a viewer's mobile money payment on WhatsApp, then send the code back to them.
-                </p>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                    <input type="text" id="gen-customer-name" placeholder="Viewer Name" class="bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
-                    <select id="gen-pass-type" class="bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs font-semibold"></select>
-                    <button onclick="generateUnlockCode()" class="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl py-2.5 px-4 text-xs font-extrabold shadow">
-                        + Create Unlock Code
-                    </button>
-                </div>
-                <div id="generated-codes-list" class="space-y-2 max-h-48 overflow-y-auto pt-1"></div>
-            </div>
-
-            <div class="border-t border-slate-200 pt-4 space-y-2.5">
-                <div class="flex justify-between items-center flex-wrap gap-2">
-                    <h3 class="text-sm font-extrabold text-amber-900">Local Preview Only: Add New Episode</h3>
-                    <span class="text-[11px] text-slate-500">Saved in this browser only — edit episodes.json on GitHub for all visitors</span>
-                </div>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    <input type="text" id="new-ep-duration" placeholder="Duration (e.g. 06:25)" class="bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
-                    <input type="number" id="new-ep-price" placeholder="Price NLe (NLe 5)" value="5" min="1" class="bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
-                </div>
-                <input type="text" id="new-ep-summary" placeholder="Video description..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
-                <input type="text" id="new-ep-url" placeholder="YouTube Link or Direct .mp4 URL *" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
-                <div class="flex flex-col sm:flex-row gap-2.5">
-                    <button onclick="addCustomEpisode()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl py-2.5 px-4 text-xs font-extrabold shadow">
-                        + Add Episode to Page
-                    </button>
-                    <button onclick="clearCustomEpisodes()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl py-2.5 px-4 text-xs font-bold">
-                        Reset Added Episodes
-                    </button>
-                </div>
-                <p id="owner-ep-feedback" class="hidden text-xs font-bold"></p>
-            </div>
-        </section>
-
-        <!-- Hero & Unlock Code Box -->
-        <section class="luxury-card p-5 sm:p-7 space-y-4">
-            <div class="flex flex-col md:flex-row justify-between gap-4 items-start md:items-center">
-                <div class="space-y-1.5">
-                    <span class="inline-block bg-amber-100 text-amber-900 border border-amber-600/30 text-[11px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">
-                        Season 1 • Exclusive Series
-                    </span>
-                    <h2 class="text-2xl sm:text-3xl font-black text-slate-900">Featured Video Series</h2>
-                    <p class="text-xs sm:text-sm text-slate-600 max-w-2xl">
-                        Watch the free trailer below, pay <strong>NLe 5 per episode</strong> via mobile money, and enter your unlock code to watch full episodes.
-                    </p>
-                </div>
-                <div class="bg-amber-50 border border-amber-600/35 rounded-2xl p-4 text-center shrink-0 w-full md:w-auto">
-                    <p class="text-[11px] uppercase font-bold text-amber-800">Every Episode</p>
-                    <p class="text-2xl font-black text-amber-950">NLe 5</p>
-                    <p class="text-[11px] text-slate-600">Any length • NLe 5 each</p>
-                </div>
-            </div>
-
-            <div class="bg-slate-900 text-white rounded-2xl p-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                <div class="flex-1">
-                    <p class="text-xs font-bold text-amber-300">Have an unlock code?</p>
-                    <p class="text-[11px] text-slate-300">Enter your code to open your unlocked episodes.</p>
-                </div>
-                <div class="flex gap-2">
-                    <input type="text" id="viewer-code-input" placeholder="e.g. AE-EP1-1234" class="bg-slate-800 border border-amber-400/50 rounded-xl px-3.5 py-2 text-xs font-mono uppercase text-white outline-none w-36 sm:w-44">
-                    <button onclick="redeemUnlockCode()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs px-4 py-2 rounded-xl transition">
-                        Unlock
-                    </button>
-                </div>
-            </div>
-            <p id="unlock-feedback" class="hidden text-xs font-bold"></p>
-        </section>
-
-        <!-- Free Trailer -->
-        <section class="luxury-card p-5 space-y-3">
+    <!-- Payment / Unlock Modal -->
+    <div id="unlockModal" class="fixed inset-0 bg-black/75 hidden items-center justify-center p-4 z-50">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-5 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between">
-                <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Official Trailer (FREE)</h3>
-                <span class="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2.5 py-1 rounded-full">Free Preview</span>
+                <h2 id="modalTitle" class="text-lg font-bold text-amber-400">Unlock Episode</h2>
+                <button onclick="closeUnlockModal()" class="text-slate-400 hover:text-white text-xl leading-none">&times;</button>
             </div>
-            <div class="aspect-video w-full bg-slate-950 rounded-2xl overflow-hidden border border-slate-200">
-                <video controls playsinline preload="metadata" class="w-full h-full object-cover">
-                    <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4">
-                    Your browser does not support video playback.
-                </video>
+            <p id="modalSummary" class="text-sm text-slate-300"></p>
+            <div class="bg-slate-900/80 border border-slate-700 rounded-xl p-3 text-xs text-slate-300 space-y-1">
+                <p><strong class="text-amber-300">Price:</strong> NLe <span id="modalPrice">5</span></p>
+                <p>1. Pay NLe <span id="modalPriceStep">5</span> via mobile money / agreed method.</p>
+                <p>2. Send your unlock request on WhatsApp to receive your code.</p>
+                <p>3. Enter your code below to unlock playback.</p>
             </div>
-        </section>
-
-        <!-- Episodes Grid -->
-        <section class="space-y-3">
-            <div class="flex justify-between items-center px-1">
-                <h3 class="text-lg font-extrabold luxury-gold-title">Episodes</h3>
-                <span class="text-xs text-slate-500 font-medium">NLe 5 per video • Stream Anytime</span>
+            <div class="space-y-2">
+                <label for="unlockCodeInput" class="block text-xs font-semibold text-slate-300">Enter Unlock Code</label>
+                <input id="unlockCodeInput" type="text" placeholder="Paste or type unlock code" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-amber-400">
+                <p id="unlockError" class="text-xs text-rose-400 hidden"></p>
             </div>
-            <div id="episodes-grid" class="grid grid-cols-1 md:grid-cols-3 gap-5"></div>
-        </section>
-
-    </main>
-
-    <!-- Payment Modal -->
-    <div id="pay-modal" class="fixed inset-0 bg-slate-900/60 hidden z-50 flex items-center justify-center p-4 backdrop-blur-xs">
-        <div class="bg-white border-2 border-amber-600/40 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-200 pb-3">
-                <h3 class="text-lg font-extrabold luxury-gold-title">Pay in Leones (NLe)</h3>
-                <button onclick="closePayModal()" class="text-slate-500 hover:text-slate-900 font-bold text-lg">✕</button>
+            <div class="flex flex-col sm:flex-row gap-2 pt-1">
+                <button onclick="verifyUnlockCode()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 py-2.5 rounded-xl text-sm font-extrabold transition">
+                    Verify &amp; Unlock
+                </button>
+                <button onclick="triggerWhatsAppFromModal()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 rounded-xl text-sm font-bold transition">
+                    Request on WhatsApp
+                </button>
             </div>
+        </div>
+    </div>
 
-            <div class="bg-amber-50 border border-amber-600/30 rounded-xl p-3.5 text-xs space-y-1.5">
-                <p class="font-extrabold text-amber-950" id="pay-item-label">Episode — NLe 5</p>
-                <p class="text-slate-700">1. Send <strong id="pay-amount-text">NLe 5</strong> via mobile money to:</p>
-                <p class="font-mono font-extrabold text-sm text-amber-900 bg-white px-3 py-1.5 rounded-lg border border-amber-600/25">
-                    +232 76 655 025
-                </p>
-                <p class="text-slate-700">2. Submit your details on WhatsApp to get your <strong>Unlock Code</strong>.</p>
+    <!-- Owner Code Manager Modal -->
+    <div id="ownerModal" class="fixed inset-0 bg-black/75 hidden items-center justify-center p-4 z-50">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-5 space-y-4 shadow-2xl">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold text-emerald-400">Owner Code Manager</h2>
+                <button onclick="closeOwnerManager()" class="text-slate-400 hover:text-white text-xl leading-none">&times;</button>
             </div>
-
-            <div class="space-y-2.5">
-                <input type="text" id="payer-name" placeholder="Your Full Name *" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
-                <input type="tel" id="payer-phone" placeholder="Phone Number Used to Pay *" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
-                <select id="payer-network" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs font-semibold">
-                    <option value="Orange Money">Orange Money</option>
-                    <option value="QMoney">QMoney</option>
-                    <option value="Mobile Money">Other Mobile Money</option>
-                </select>
-                <input type="text" id="payer-ref" placeholder="Transaction ID / Reference (Optional)" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
+            <div class="space-y-2">
+                <label for="ownerEpisodeSelect" class="block text-xs font-semibold text-slate-300">Select Episode</label>
+                <select id="ownerEpisodeSelect" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-400"></select>
             </div>
-
-            <div class="flex gap-2.5 pt-1">
-                <button onclick="closePayModal()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 py-2.5 rounded-xl font-bold text-xs">Cancel</button>
-                <button onclick="sendPaymentWhatsApp()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 rounded-xl font-extrabold text-xs shadow">
-                    Request Code on WhatsApp
+            <button onclick="generateCodeForSelectedEpisode()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 rounded-xl text-sm font-bold transition">
+                Generate Unlock Code
+            </button>
+            <div id="generatedCodeBox" class="hidden bg-slate-900 border border-slate-700 rounded-xl p-3 space-y-2">
+                <p class="text-xs text-slate-400">Generated Code:</p>
+                <p id="generatedCodeValue" class="font-mono text-base font-bold text-amber-300 break-all"></p>
+                <button onclick="copyGeneratedCode()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+                    Copy Code
                 </button>
             </div>
         </div>
     </div>
 
     <script>
-        const WHATSAPP_NUMBER = "23276655025";
-        const OWNER_PIN = "2537";
-        const CODES_STORAGE_KEY = "series_cinema_issued_codes_v1";
-        const UNLOCKED_STORAGE_KEY = "series_cinema_unlocked_passes_v1";
-        const CUSTOM_EPISODES_KEY = "series_cinema_custom_episodes_v1";
-        const EPISODES_JSON_URL = "./episodes.json";
         const FIXED_PRICE_NLE = 5;
+        const WHATSAPP_NUMBER = "23276000000";
+        const UNLOCK_STORAGE_KEY = "series_cinema_unlocked_v1";
+        const CODE_SECRET = "SERIES_CINEMA_KEY_2026";
 
-        const DEFAULT_EPISODES = [
-            {
-                id: "EP1",
-                number: "Episode 1",
-                duration: "01:51:05",
-                priceNLe: FIXED_PRICE_NLE,
-                summary: "Watch Episode 1 of Season 1.",
-                videoUrl: "https://youtu.be/OnigT4KtVJY?si=8X53J3Adn9ajdv7p"
-            },
-            {
-                id: "EP2",
-                number: "Episode 2",
-                duration: "15 mins",
-                priceNLe: FIXED_PRICE_NLE,
-                summary: "Add your episode 2 description here.",
-                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
-            },
-            {
-                id: "EP3",
-                number: "Episode 3",
-                duration: "15 mins",
-                priceNLe: FIXED_PRICE_NLE,
-                summary: "Add your episode 3 description here.",
-                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"
-            }
-        ];
+        let episodesData = [];
+        let activeEpisode = null;
 
-        let remoteEpisodes = null;
-        let selectedOffer = { label: "Episode 1", amount: FIXED_PRICE_NLE };
-        let ownerUnlocked = false;
-
-        function extractYouTubeId(input) {
-            if (!input) return null;
-            const trimmed = input.trim();
-            if (/^[a-zA-Z0-9_-]{11}$/.test(trimmed)) return trimmed;
-            try {
-                const url = new URL(trimmed);
-                const host = url.hostname.replace(/^www\./, "");
-                if (host === "youtu.be") {
-                    const id = url.pathname.split("/").filter(Boolean)[0];
-                    return id && /^[a-zA-Z0-9_-]{11}$/.test(id) ? id : null;
-                }
-                if (host === "youtube.com" || host === "m.youtube.com") {
-                    const vParam = url.searchParams.get("v");
-                    if (vParam && /^[a-zA-Z0-9_-]{11}$/.test(vParam)) return vParam;
-                    const parts = url.pathname.split("/").filter(Boolean);
-                    const embedIdx = parts.findIndex(p => p === "embed" || p === "shorts" || p === "live");
-                    if (embedIdx !== -1 && parts[embedIdx + 1] && /^[a-zA-Z0-9_-]{11}$/.test(parts[embedIdx + 1])) {
-                        return parts[embedIdx + 1];
-                    }
-                }
-            } catch (e) {}
-            return null;
+        function escapeHtml(value) {
+            return String(value ?? "")
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#39;");
         }
 
-        function isValidVideoSource(input) {
-            if (!input) return false;
-            if (extractYouTubeId(input)) return true;
-            return /^https?:\/\//i.test(input.trim());
+        function extractYouTubeId(url) {
+            if (!url) return null;
+            const match = String(url).match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+            return match ? match[1] : null;
         }
 
-        function renderUnlockedPlayer(ep) {
-            const ytId = extractYouTubeId(ep.videoUrl);
+        function isValidVideoSource(url) {
+            if (!url) return false;
+            const trimmed = String(url).trim();
+            if (extractYouTubeId(trimmed)) return true;
+            return /^https?:\/\/.+/i.test(trimmed);
+        }
+
+        function getEpisodePoster(videoUrl) {
+            if (!videoUrl) return "";
+            const ytId = extractYouTubeId(videoUrl);
             if (ytId) {
-                const embedUrl = `https://www.youtube.com/embed/${ytId}?rel=0&playsinline=1`;
+                return `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
+            }
+            const cleanUrl = String(videoUrl).trim().split("?")[0];
+            if (/res\.cloudinary\.com\/.+\/video\/upload\/.+\.(mp4|mov|webm|m4v)$/i.test(cleanUrl)) {
+                return cleanUrl.replace(/\.(mp4|mov|webm|m4v)$/i, ".jpg");
+            }
+            return "";
+        }
+
+        function getUnlockedSet() {
+            try {
+                const raw = localStorage.getItem(UNLOCK_STORAGE_KEY);
+                const parsed = raw ? JSON.parse(raw) : [];
+                return new Set(Array.isArray(parsed) ? parsed : []);
+            } catch {
+                return new Set();
+            }
+        }
+
+        function saveUnlockedId(episodeId) {
+            const set = getUnlockedSet();
+            set.add(String(episodeId));
+            localStorage.setItem(UNLOCK_STORAGE_KEY, JSON.stringify([...set]));
+        }
+
+        function computeExpectedCode(episodeId) {
+            const input = `${String(episodeId).trim().toUpperCase()}:${CODE_SECRET}`;
+            let hash = 2166136261;
+            for (let i = 0; i < input.length; i++) {
+                hash ^= input.charCodeAt(i);
+                hash = Math.imul(hash, 16777619);
+            }
+            return `SC-${(hash >>> 0).toString(36).toUpperCase()}`;
+        }
+
+        function redirectToWhatsAppForEpisode(episodeLabel, summary, priceNLe = FIXED_PRICE_NLE) {
+            const text = encodeURIComponent(
+                `Hello Series Cinema, I want to pay NLe ${priceNLe} to unlock ${episodeLabel} (${summary}). Please send my unlock code.`
+            );
+            const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
+            window.open(waUrl, "_blank", "noopener,noreferrer");
+        }
+
+        function openUnlockModal(episode) {
+            activeEpisode = episode;
+            const price = Number(episode.priceNLe) || FIXED_PRICE_NLE;
+            document.getElementById("modalTitle").textContent = `Unlock ${episode.number || episode.id}`;
+            document.getElementById("modalSummary").textContent = episode.summary || "";
+            document.getElementById("modalPrice").textContent = price;
+            document.getElementById("modalPriceStep").textContent = price;
+            document.getElementById("unlockCodeInput").value = "";
+            document.getElementById("unlockError").classList.add("hidden");
+            document.getElementById("unlockModal").classList.remove("hidden");
+            document.getElementById("unlockModal").classList.add("flex");
+        }
+
+        function closeUnlockModal() {
+            document.getElementById("unlockModal").classList.add("hidden");
+            document.getElementById("unlockModal").classList.remove("flex");
+            activeEpisode = null;
+        }
+
+        function triggerWhatsAppFromModal() {
+            if (!activeEpisode) return;
+            const label = activeEpisode.number || activeEpisode.id;
+            const summary = activeEpisode.summary || "";
+            const price = Number(activeEpisode.priceNLe) || FIXED_PRICE_NLE;
+            redirectToWhatsAppForEpisode(label, summary, price);
+        }
+
+        function verifyUnlockCode() {
+            if (!activeEpisode) return;
+            const entered = document.getElementById("unlockCodeInput").value.trim().toUpperCase();
+            const expected = computeExpectedCode(activeEpisode.id);
+            const errorEl = document.getElementById("unlockError");
+
+            if (entered && entered === expected) {
+                saveUnlockedId(activeEpisode.id);
+                errorEl.classList.add("hidden");
+                closeUnlockModal();
+                renderEpisodes();
+            } else {
+                errorEl.textContent = "Invalid unlock code. Please check the code and try again.";
+                errorEl.classList.remove("hidden");
+            }
+        }
+
+        function openOwnerManager() {
+            const select = document.getElementById("ownerEpisodeSelect");
+            select.innerHTML = episodesData.map(ep => {
+                const label = `${ep.id} — ${ep.number || "Episode"}`;
+                return `<option value="${escapeHtml(ep.id)}">${escapeHtml(label)}</option>`;
+            }).join("");
+            document.getElementById("generatedCodeBox").classList.add("hidden");
+            document.getElementById("ownerModal").classList.remove("hidden");
+            document.getElementById("ownerModal").classList.add("flex");
+        }
+
+        function closeOwnerManager() {
+            document.getElementById("ownerModal").classList.add("hidden");
+            document.getElementById("ownerModal").classList.remove("flex");
+        }
+
+        function generateCodeForSelectedEpisode() {
+            const epId = document.getElementById("ownerEpisodeSelect").value;
+            if (!epId) return;
+            const code = computeExpectedCode(epId);
+            document.getElementById("generatedCodeValue").textContent = code;
+            document.getElementById("generatedCodeBox").classList.remove("hidden");
+        }
+
+        function copyGeneratedCode() {
+            const code = document.getElementById("generatedCodeValue").textContent;
+            if (!code) return;
+            navigator.clipboard?.writeText(code).catch(() => {});
+        }
+
+        function renderPlayer(ep) {
+            const url = String(ep.videoUrl || "").trim();
+            const ytId = extractYouTubeId(url);
+            if (ytId) {
                 return `
-                    <div class="relative aspect-video w-full bg-slate-950 rounded-xl overflow-hidden border border-emerald-500/40">
+                    <div class="aspect-video w-full rounded-xl overflow-hidden bg-black">
                         <iframe
-                            src="${embedUrl}"
-                            title="${ep.number}"
-                            class="yt-crop-iframe"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                            referrerpolicy="strict-origin-when-cross-origin"
+                            src="https://www.youtube.com/embed/${escapeHtml(ytId)}?rel=0"
+                            title="${escapeHtml(ep.number || ep.id)}"
+                            class="w-full h-full"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowfullscreen
                         ></iframe>
                     </div>
                 `;
             }
-
+            if (isValidVideoSource(url)) {
+                const posterUrl = getEpisodePoster(url);
+                return `
+                    <video
+                        controls
+                        playsinline
+                        preload="metadata"
+                        ${posterUrl ? `poster="${escapeHtml(posterUrl)}"` : ""}
+                        src="${escapeHtml(url)}"
+                        class="w-full aspect-video rounded-xl bg-black object-contain"
+                    ></video>
+                `;
+            }
             return `
-                <div class="space-y-2">
-                    <div class="aspect-video w-full bg-slate-950 rounded-xl overflow-hidden border border-emerald-500/40">
-                        <video controls playsinline preload="metadata" class="w-full h-full object-cover" onwaiting="document.getElementById('buf-${ep.id}').classList.remove('hidden')" onplaying="document.getElementById('buf-${ep.id}').classList.add('hidden')" onerror="document.getElementById('err-${ep.id}').classList.remove('hidden')">
-                            <source src="${ep.videoUrl}" type="video/mp4">
-                        </video>
-                    </div>
-                    <div class="flex items-center justify-between gap-2 text-[11px]">
-                        <span id="buf-${ep.id}" class="hidden text-amber-800 font-semibold">Buffering...</span>
-                    </div>
-                    <p id="err-${ep.id}" class="hidden text-[11px] text-amber-800 bg-amber-50 border border-amber-300 rounded-lg p-2">
-                        Inline player could not load. Please check your connection or try again.
-                    </p>
+                <div class="aspect-video w-full rounded-xl bg-slate-950 flex items-center justify-center p-4 text-xs text-slate-400">
+                    Video link not available yet.
                 </div>
             `;
         }
 
-        function normalizeEpisodeList(rawList, startIndex = 1) {
-            if (!Array.isArray(rawList)) return [];
-            return rawList
-                .filter(item => item && typeof item === "object" && item.videoUrl)
-                .map((item, idx) => {
-                    const num = startIndex + idx;
-                    return {
-                        id: item.id || `EP${num}`,
-                        number: item.number || `Episode ${num}`,
-                        duration: item.duration || "10 mins",
-                        priceNLe: FIXED_PRICE_NLE,
-                        summary: item.summary || item.title || "Watch full video.",
-                        videoUrl: String(item.videoUrl).trim()
-                    };
-                });
-        }
-
-        function getCustomEpisodes() {
-            try {
-                const raw = JSON.parse(localStorage.getItem(CUSTOM_EPISODES_KEY) || "[]");
-                return Array.isArray(raw) ? raw : [];
-            } catch (e) {
-                return [];
-            }
-        }
-
-        function saveCustomEpisodes(list) {
-            try { localStorage.setItem(CUSTOM_EPISODES_KEY, JSON.stringify(list)); } catch (e) {}
-        }
-
-        function getBaseEpisodes() {
-            if (Array.isArray(remoteEpisodes) && remoteEpisodes.length > 0) {
-                return normalizeEpisodeList(remoteEpisodes, 1);
-            }
-            return DEFAULT_EPISODES;
-        }
-
-        function getAllEpisodes() {
-            const base = getBaseEpisodes();
-            const custom = normalizeEpisodeList(getCustomEpisodes(), base.length + 1);
-            return [...base, ...custom];
-        }
-
-        async function loadRemoteEpisodes() {
-            try {
-                const res = await fetch(`${EPISODES_JSON_URL}?t=${Date.now()}`, { cache: "no-store" });
-                if (!res.ok) return;
-                const data = await res.json();
-                if (Array.isArray(data) && data.length > 0) {
-                    remoteEpisodes = data;
-                    syncPassTypeOptions();
-                    renderEpisodes();
-                }
-            } catch (e) {}
-        }
-
-        function syncPassTypeOptions() {
-            const select = document.getElementById("gen-pass-type");
-            if (!select) return;
-            const currentVal = select.value;
-            const episodes = getAllEpisodes();
-            select.innerHTML = [
-                ...episodes.map(ep => `<option value="${ep.id}">${ep.number} — NLe ${FIXED_PRICE_NLE}</option>`),
-                `<option value="SEASON">All Episodes Pass</option>`
-            ].join("");
-            if ([...select.options].some(o => o.value === currentVal)) {
-                select.value = currentVal;
-            }
-        }
-
-        function addCustomEpisode() {
-            const duration = document.getElementById("new-ep-duration").value.trim() || "10 mins";
-            const summary = document.getElementById("new-ep-summary").value.trim();
-            const videoUrl = document.getElementById("new-ep-url").value.trim();
-            const feedback = document.getElementById("owner-ep-feedback");
-            feedback.classList.remove("hidden");
-
-            if (!summary || !videoUrl) {
-                feedback.className = "text-xs font-bold text-red-600";
-                feedback.innerText = "Please enter both a video description and a YouTube or .mp4 Video URL.";
-                return;
-            }
-
-            if (!isValidVideoSource(videoUrl)) {
-                feedback.className = "text-xs font-bold text-red-600";
-                feedback.innerText = "Enter a valid YouTube link (youtu.be/... or youtube.com/watch?v=...) or a direct https:// video URL.";
-                return;
-            }
-
-            const nextNum = getAllEpisodes().length + 1;
-            const custom = getCustomEpisodes();
-            custom.push({
-                id: `EP${nextNum}`,
-                number: `Episode ${nextNum}`,
-                duration,
-                priceNLe: FIXED_PRICE_NLE,
-                summary,
-                videoUrl
-            });
-            saveCustomEpisodes(custom);
-
-            document.getElementById("new-ep-duration").value = "";
-            document.getElementById("new-ep-summary").value = "";
-            document.getElementById("new-ep-url").value = "";
-
-            feedback.className = "text-xs font-bold text-amber-800";
-            feedback.innerText = `Added Episode ${nextNum} in this browser only. Add it to episodes.json on GitHub for all visitors.`;
-            syncPassTypeOptions();
-            renderEpisodes();
-        }
-
-        function clearCustomEpisodes() {
-            saveCustomEpisodes([]);
-            const feedback = document.getElementById("owner-ep-feedback");
-            feedback.classList.remove("hidden");
-            feedback.className = "text-xs font-bold text-slate-700";
-            feedback.innerText = "Reset local browser episodes.";
-            syncPassTypeOptions();
-            renderEpisodes();
-        }
-
-        function getIssuedCodes() {
-            try {
-                const raw = JSON.parse(localStorage.getItem(CODES_STORAGE_KEY) || "[]");
-                return Array.isArray(raw) ? raw : [];
-            } catch (e) {
-                return [];
-            }
-        }
-
-        function saveIssuedCodes(list) {
-            try { localStorage.setItem(CODES_STORAGE_KEY, JSON.stringify(list)); } catch (e) {}
-        }
-
-        function getViewerPasses() {
-            try {
-                const raw = JSON.parse(localStorage.getItem(UNLOCKED_STORAGE_KEY) || "[]");
-                return Array.isArray(raw) ? raw : [];
-            } catch (e) {
-                return [];
-            }
-        }
-
-        function saveViewerPasses(list) {
-            try { localStorage.setItem(UNLOCKED_STORAGE_KEY, JSON.stringify(list)); } catch (e) {}
-        }
-
-        function isEpisodeUnlocked(epId) {
-            const passes = getViewerPasses();
-            return passes.includes("SEASON") || passes.includes(epId);
-        }
-
-        function toggleOwnerPanel() {
-            const panel = document.getElementById("owner-panel");
-            if (!ownerUnlocked) {
-                const pin = prompt("Enter Owner Code Manager PIN:");
-                if (pin !== OWNER_PIN) {
-                    if (pin !== null) alert("Incorrect PIN.");
-                    return;
-                }
-                ownerUnlocked = true;
-            }
-            panel.classList.toggle("hidden");
-            syncPassTypeOptions();
-            renderIssuedCodes();
-        }
-
-        function generateUnlockCode() {
-            const name = document.getElementById("gen-customer-name").value.trim() || "Viewer";
-            const passType = document.getElementById("gen-pass-type").value;
-            const rand = Math.floor(1000 + Math.random() * 9000);
-            const code = `AE-${passType}-${rand}`;
-
-            const codes = getIssuedCodes();
-            codes.unshift({ code, name, passType, createdAt: new Date().toLocaleDateString() });
-            saveIssuedCodes(codes);
-
-            document.getElementById("gen-customer-name").value = "";
-            renderIssuedCodes();
-            alert(`Unlock Code Created: ${code}\nSend this code to ${name} on WhatsApp.`);
-        }
-
-        function deleteIssuedCode(idx) {
-            const codes = getIssuedCodes();
-            codes.splice(idx, 1);
-            saveIssuedCodes(codes);
-            renderIssuedCodes();
-        }
-
-        function renderIssuedCodes() {
-            const container = document.getElementById("generated-codes-list");
-            const codes = getIssuedCodes();
-            if (codes.length === 0) {
-                container.innerHTML = `<p class="text-xs text-slate-500">No unlock codes generated yet.</p>`;
-                return;
-            }
-            container.innerHTML = codes.map((c, idx) => `
-                <div class="flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs">
-                    <div>
-                        <span class="font-mono font-extrabold text-emerald-800">${c.code}</span>
-                        <span class="text-slate-600"> — ${c.name} (${c.passType})</span>
-                    </div>
-                    <button onclick="deleteIssuedCode(${idx})" class="text-red-600 font-bold px-2">Delete</button>
-                </div>
-            `).join("");
-        }
-
-        function redeemUnlockCode() {
-            const raw = document.getElementById("viewer-code-input").value.trim().toUpperCase();
-            const feedback = document.getElementById("unlock-feedback");
-            feedback.classList.remove("hidden");
-
-            if (!raw) {
-                feedback.className = "text-xs font-bold text-red-600";
-                feedback.innerText = "Please enter your unlock code first.";
-                return;
-            }
-
-            const issued = getIssuedCodes().find(c => c.code.toUpperCase() === raw);
-            const formatMatch = raw.match(/^AE-(SEASON|EP\d+)-\d{4}$/);
-
-            if (!issued && !formatMatch) {
-                feedback.className = "text-xs font-bold text-red-600";
-                feedback.innerText = "Invalid unlock code. Please check the code sent on WhatsApp.";
-                return;
-            }
-
-            const grantedPass = issued ? issued.passType : formatMatch[1];
-            const passes = getViewerPasses();
-            if (!passes.includes(grantedPass)) {
-                passes.push(grantedPass);
-                saveViewerPasses(passes);
-            }
-
-            feedback.className = "text-xs font-bold text-emerald-700";
-            feedback.innerText = `Unlocked (${grantedPass})! Enjoy watching below.`;
-            renderEpisodes();
-        }
-
-        function redirectToWhatsAppForEpisode(epNumber, epSummary, amount = FIXED_PRICE_NLE) {
-            openPayModal(epNumber, amount);
-
-            const msg = [
-                `Hello, I want to watch ${epNumber} (${epSummary}) on Series Cinema.`,
-                `Please send me the Unlock Code so I can view it (NLe ${amount}).`
-            ].join("\n");
-
-            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank");
-        }
-
-        function openPayModal(label, amount = FIXED_PRICE_NLE) {
-            selectedOffer = { label, amount: FIXED_PRICE_NLE };
-            document.getElementById("pay-item-label").innerText = `${label} — NLe ${FIXED_PRICE_NLE}`;
-            document.getElementById("pay-amount-text").innerText = `NLe ${FIXED_PRICE_NLE}`;
-            document.getElementById("pay-modal").classList.remove("hidden");
-        }
-
-        function closePayModal() {
-            document.getElementById("pay-modal").classList.add("hidden");
-        }
-
-        function sendPaymentWhatsApp() {
-            const name = document.getElementById("payer-name").value.trim();
-            const phone = document.getElementById("payer-phone").value.trim();
-            const network = document.getElementById("payer-network").value;
-            const ref = document.getElementById("payer-ref").value.trim();
-
-            if (!name || !phone) {
-                alert("Please enter your full name and the phone number used for payment.");
-                return;
-            }
-
-            const msg = [
-                "Hello, I just paid for the Video Series:",
-                `• Episode: ${selectedOffer.label} (NLe ${FIXED_PRICE_NLE})`,
-                `• Viewer Name: ${name}`,
-                `• Payment Phone: ${phone}`,
-                `• Payment Method: ${network}`,
-                ref ? `• Transaction Ref: ${ref}` : "• Transaction Ref: Sending screenshot",
-                "Please send my Unlock Code."
-            ].join("\n");
-
-            closePayModal();
-            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank");
-        }
-
         function renderEpisodes() {
-            const grid = document.getElementById("episodes-grid");
-            const episodes = getAllEpisodes();
-            grid.innerHTML = episodes.map(ep => {
-                const unlocked = isEpisodeUnlocked(ep.id);
-                const safeNumber = String(ep.number).replace(/'/g, "\\'");
-                const safeSummary = String(ep.summary).replace(/'/g, "\\'");
+            const container = document.getElementById("episodesContainer");
+            if (!Array.isArray(episodesData) || episodesData.length === 0) {
+                container.innerHTML = `<p class="text-center text-slate-400 text-sm py-8">No episodes found.</p>`;
+                return;
+            }
+
+            const unlockedSet = getUnlockedSet();
+
+            container.innerHTML = episodesData.map((ep, idx) => {
+                const epId = String(ep.id ?? `EP${idx + 1}`);
+                const epNumber = String(ep.number ?? `Episode ${idx + 1}`);
+                const duration = String(ep.duration ?? "");
+                const summary = String(ep.summary ?? "");
+                const isUnlocked = unlockedSet.has(epId);
+
+                const safeNumber = escapeHtml(epNumber);
+                const safeSummary = escapeHtml(summary);
+                const safeDuration = escapeHtml(duration);
+                const posterUrl = getEpisodePoster(ep.videoUrl);
+
+                const epJsonAttr = escapeHtml(JSON.stringify({
+                    id: epId,
+                    number: epNumber,
+                    duration,
+                    priceNLe: Number(ep.priceNLe) || FIXED_PRICE_NLE,
+                    summary,
+                    videoUrl: ep.videoUrl || ""
+                }));
+
                 return `
-                    <div class="luxury-card p-4 flex flex-col justify-between space-y-3">
-                        <div class="space-y-2">
-                            <div class="flex justify-between items-center">
-                                <span class="text-[11px] font-extrabold uppercase text-amber-800">${ep.number} • ${ep.duration}</span>
-                                <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full ${unlocked ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-900"}">
-                                    ${unlocked ? "Unlocked" : `NLe ${FIXED_PRICE_NLE}`}
-                                </span>
-                            </div>
-                            <p class="text-xs sm:text-sm text-slate-700 font-medium">${ep.summary}</p>
+                    <article class="bg-slate-800 border border-slate-700 rounded-2xl p-4 space-y-3 shadow">
+                        <div class="flex items-center justify-between gap-2">
+                            <p class="text-xs font-bold uppercase tracking-wider text-amber-400">
+                                ${safeNumber}${safeDuration ? ` &bull; ${safeDuration}` : ""}
+                            </p>
+                            <span class="text-xs font-bold px-2.5 py-0.5 rounded-full ${isUnlocked ? "bg-emerald-500/20 text-emerald-300" : "bg-amber-500/20 text-amber-300"}">
+                                ${isUnlocked ? "Unlocked" : "Locked"}
+                            </span>
                         </div>
 
-                        ${unlocked ? renderUnlockedPlayer(ep) : `
-                            <div class="bg-slate-900 text-white rounded-xl p-4 text-center space-y-2.5">
-                                <p class="text-xs font-bold text-amber-300">Locked Video</p>
-                                <button onclick="redirectToWhatsAppForEpisode('${safeNumber}', '${safeSummary}', ${FIXED_PRICE_NLE})" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 py-2 rounded-xl font-extrabold text-xs transition">
-                                    Unlock ${ep.number} (NLe ${FIXED_PRICE_NLE})
-                                </button>
+                        <p class="text-sm text-slate-200 font-medium">${safeSummary}</p>
+
+                        ${isUnlocked ? renderPlayer(ep) : `
+                            <div class="relative aspect-video w-full bg-slate-950 rounded-xl overflow-hidden flex items-center justify-center p-4 text-center">
+                                ${posterUrl ? `<img src="${escapeHtml(posterUrl)}" alt="${safeNumber} preview" class="absolute inset-0 w-full h-full object-cover">` : ""}
+                                <div class="absolute inset-0 bg-slate-950/65"></div>
+                                <div class="relative z-10 space-y-2.5 w-full max-w-xs">
+                                    <p class="text-xs font-bold text-amber-300">Locked Video</p>
+                                    <button type="button" data-episode="${epJsonAttr}" onclick="openUnlockModal(JSON.parse(this.dataset.episode))" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 py-2 rounded-xl font-extrabold text-xs transition shadow">
+                                        Unlock ${safeNumber} (NLe ${FIXED_PRICE_NLE})
+                                    </button>
+                                </div>
                             </div>
                         `}
-                    </div>
+                    </article>
                 `;
             }).join("");
         }
 
-        syncPassTypeOptions();
-        renderEpisodes();
-        loadRemoteEpisodes();
+        async function loadEpisodes() {
+            try {
+                const res = await fetch(`episodes.json?v=${Date.now()}`, { cache: "no-store" });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                episodesData = Array.isArray(data) ? data : [];
+                renderEpisodes();
+            } catch (err) {
+                document.getElementById("episodesContainer").innerHTML = `
+                    <div class="bg-slate-800 border border-rose-500/40 rounded-2xl p-4 text-center text-sm text-rose-300">
+                        Could not load episodes.json (${escapeHtml(err.message)}).
+                    </div>
+                `;
+            }
+        }
+
+        loadEpisodes();
     </script>
 </body>
 </html>
