@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Series Cinema | Pay in Leones (NLe)</title>
+    <title>Alfred Enterprise | Exclusive Video Series (NLe)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
@@ -26,32 +26,35 @@
 </head>
 <body class="min-h-screen font-sans pb-20">
 
-    <!-- Header -->
     <header class="bg-white/95 border-b border-amber-600/25 p-4 sticky top-0 z-40 backdrop-blur shadow-sm">
         <div class="max-w-5xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-3">
             <div>
-                <h1 class="text-xl font-extrabold luxury-gold-title">Series Cinema</h1>
-                <p class="text-xs text-slate-600 font-medium">Pay in Leones (NLe) • Unlock Code Access</p>
+                <h1 class="text-xl font-extrabold luxury-gold-title">Alfred Enterprise — Series Cinema</h1>
+                <p class="text-xs text-slate-600 font-medium">Pay in Leones (NLe) • Instant Unlock Code Access</p>
             </div>
-            <button id="owner-btn" onclick="toggleOwnerPanel()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-3.5 py-2 rounded-xl font-bold text-xs shadow transition">
-                Owner Code Manager
-            </button>
+            <div class="flex items-center gap-2.5 flex-wrap justify-center">
+                <a href="./index.html" class="bg-amber-100 hover:bg-amber-200 text-amber-950 border border-amber-600/40 px-3.5 py-2 rounded-xl font-bold text-xs transition">
+                    ← Back to Home
+                </a>
+                <button id="owner-btn" onclick="toggleOwnerPanel()" class="bg-emerald-700 hover:bg-emerald-600 text-white px-3.5 py-2 rounded-xl font-bold text-xs shadow transition">
+                    Owner Code Manager
+                </button>
+            </div>
         </div>
     </header>
 
     <main class="max-w-5xl mx-auto p-4 space-y-6 mt-2">
 
-        <!-- Owner Code Generator Panel -->
         <section id="owner-panel" class="hidden bg-white border-2 border-emerald-600 rounded-2xl p-5 shadow-xl space-y-4">
             <div class="flex justify-between items-center border-b border-slate-200 pb-2.5">
                 <h2 class="text-base font-extrabold text-emerald-800">Owner Unlock Code Manager</h2>
                 <button onclick="toggleOwnerPanel()" class="text-xs bg-red-600 text-white px-3 py-1 rounded-lg font-bold">Close</button>
             </div>
             <p class="text-xs text-slate-600">
-                Generate a code after verifying a viewer's mobile money payment on WhatsApp, then send the code back to them.
+                After verifying a viewer's Orange Money, QMoney, or AfriMoney payment on WhatsApp, create a code below and send it to them.
             </p>
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                <input type="text" id="gen-customer-name" placeholder="Viewer Name" class="bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
+                <input type="text" id="gen-customer-name" placeholder="Viewer Name (e.g. Mariama)" class="bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
                 <select id="gen-pass-type" class="bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs font-semibold">
                     <option value="SEASON">Full Season Pass (All Episodes)</option>
                     <option value="EP1">Episode 1 Only</option>
@@ -65,12 +68,11 @@
             <div id="generated-codes-list" class="space-y-2 max-h-48 overflow-y-auto pt-1"></div>
         </section>
 
-        <!-- Hero & Unlock Code Box -->
         <section class="luxury-card p-5 sm:p-7 space-y-4">
             <div class="flex flex-col md:flex-row justify-between gap-4 items-start md:items-center">
                 <div class="space-y-1.5">
                     <span class="inline-block bg-amber-100 text-amber-900 border border-amber-600/30 text-[11px] font-extrabold px-3 py-1 rounded-full uppercase tracking-wider">
-                        Season 1 • Exclusive Series
+                        Season 1 • Original Series
                     </span>
                     <h2 class="text-2xl sm:text-3xl font-black text-slate-900">Featured Video Series</h2>
                     <p class="text-xs sm:text-sm text-slate-600 max-w-2xl">
@@ -86,8 +88,8 @@
 
             <div class="bg-slate-900 text-white rounded-2xl p-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
                 <div class="flex-1">
-                    <p class="text-xs font-bold text-amber-300">Have an unlock code?</p>
-                    <p class="text-[11px] text-slate-300">Enter your code to open your unlocked episodes.</p>
+                    <p class="text-xs font-bold text-amber-300">Already paid and got your code?</p>
+                    <p class="text-[11px] text-slate-300">Enter your unlock code below to open your paid episodes.</p>
                 </div>
                 <div class="flex gap-2">
                     <input type="text" id="viewer-code-input" placeholder="e.g. AE-SEASON-1234" class="bg-slate-800 border border-amber-400/50 rounded-xl px-3.5 py-2 text-xs font-mono uppercase text-white outline-none w-36 sm:w-44">
@@ -99,7 +101,6 @@
             <p id="unlock-feedback" class="hidden text-xs font-bold"></p>
         </section>
 
-        <!-- Free Trailer -->
         <section class="luxury-card p-5 space-y-3">
             <div class="flex items-center justify-between">
                 <h3 class="text-base sm:text-lg font-extrabold text-slate-900">Official Trailer (FREE)</h3>
@@ -113,10 +114,9 @@
             </div>
         </section>
 
-        <!-- Episodes Grid -->
         <section class="space-y-3">
             <div class="flex justify-between items-center px-1">
-                <h3 class="text-lg font-extrabold luxury-gold-title">Episodes</h3>
+                <h3 class="text-lg font-extrabold luxury-gold-title">Season 1 Episodes</h3>
                 <span class="text-xs text-slate-500 font-medium">Pay in NLe • Stream Anytime</span>
             </div>
             <div id="episodes-grid" class="grid grid-cols-1 md:grid-cols-3 gap-5"></div>
@@ -124,7 +124,6 @@
 
     </main>
 
-    <!-- Payment Modal -->
     <div id="pay-modal" class="fixed inset-0 bg-slate-900/60 hidden z-50 flex items-center justify-center p-4 backdrop-blur-xs">
         <div class="bg-white border-2 border-amber-600/40 rounded-2xl w-full max-w-md p-6 shadow-2xl space-y-4">
             <div class="flex justify-between items-center border-b border-slate-200 pb-3">
@@ -138,7 +137,7 @@
                 <p class="font-mono font-extrabold text-sm text-amber-900 bg-white px-3 py-1.5 rounded-lg border border-amber-600/25">
                     +232 76 655 025
                 </p>
-                <p class="text-slate-700">2. Submit your details on WhatsApp to get your <strong>Unlock Code</strong>.</p>
+                <p class="text-slate-700">2. Submit your details on WhatsApp to receive your <strong>Unlock Code</strong>.</p>
             </div>
 
             <div class="space-y-2.5">
@@ -147,7 +146,7 @@
                 <select id="payer-network" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs font-semibold">
                     <option value="Orange Money">Orange Money</option>
                     <option value="QMoney">QMoney</option>
-                    <option value="Mobile Money">Other Mobile Money</option>
+                    <option value="AfriMoney">AfriMoney</option>
                 </select>
                 <input type="text" id="payer-ref" placeholder="Transaction ID / Reference (Optional)" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
             </div>
@@ -164,8 +163,8 @@
     <script>
         const WHATSAPP_NUMBER = "23276655025";
         const OWNER_PIN = "2537";
-        const CODES_STORAGE_KEY = "series_cinema_issued_codes_v1";
-        const UNLOCKED_STORAGE_KEY = "series_cinema_unlocked_passes_v1";
+        const CODES_STORAGE_KEY = "alfred_series_issued_codes_v1";
+        const UNLOCKED_STORAGE_KEY = "alfred_series_unlocked_passes_v1";
 
         const EPISODES = [
             {
