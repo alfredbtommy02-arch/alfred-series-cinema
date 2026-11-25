@@ -22,6 +22,12 @@
             -webkit-text-fill-color: transparent;
             font-weight: 800;
         }
+        .yt-crop-iframe {
+            width: 112%;
+            height: 118%;
+            margin-left: -6%;
+            margin-top: -4%;
+        }
     </style>
 </head>
 <body class="min-h-screen font-sans pb-20">
@@ -255,24 +261,16 @@
             const ytId = extractYouTubeId(ep.videoUrl);
             if (ytId) {
                 const embedUrl = `https://www.youtube.com/embed/${ytId}?rel=0&playsinline=1`;
-                const watchUrl = `https://youtu.be/${ytId}`;
                 return `
-                    <div class="space-y-2">
-                        <div class="aspect-video w-full bg-slate-950 rounded-xl overflow-hidden border border-emerald-500/40">
-                            <iframe
-                                src="${embedUrl}"
-                                title="${ep.number}"
-                                class="w-full h-full"
-                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                                referrerpolicy="strict-origin-when-cross-origin"
-                                allowfullscreen
-                            ></iframe>
-                        </div>
-                        <div class="flex justify-end text-[11px]">
-                            <a href="${watchUrl}" target="_blank" rel="noopener" class="text-emerald-800 hover:underline font-bold">
-                                Open on YouTube ↗
-                            </a>
-                        </div>
+                    <div class="relative aspect-video w-full bg-slate-950 rounded-xl overflow-hidden border border-emerald-500/40">
+                        <iframe
+                            src="${embedUrl}"
+                            title="${ep.number}"
+                            class="yt-crop-iframe"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerpolicy="strict-origin-when-cross-origin"
+                            allowfullscreen
+                        ></iframe>
                     </div>
                 `;
             }
@@ -286,12 +284,9 @@
                     </div>
                     <div class="flex items-center justify-between gap-2 text-[11px]">
                         <span id="buf-${ep.id}" class="hidden text-amber-800 font-semibold">Buffering...</span>
-                        <a href="${ep.videoUrl}" target="_blank" rel="noopener" class="ml-auto text-emerald-800 hover:underline font-bold">
-                            Open Fast Direct Stream ↗
-                        </a>
                     </div>
                     <p id="err-${ep.id}" class="hidden text-[11px] text-amber-800 bg-amber-50 border border-amber-300 rounded-lg p-2">
-                        Inline player could not load. Tap <strong>Open Fast Direct Stream</strong> above.
+                        Inline player could not load. Please check your connection or try again.
                     </p>
                 </div>
             `;
