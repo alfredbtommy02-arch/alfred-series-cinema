@@ -1,26 +1,26 @@
 [
   {
-    "id": "EP1",
-    "number": "Episode 1",
-    "duration": "01:51:05",
+    "id": "EP4",
+    "number": "Episode 4",
+    "duration": "00:08",
     "priceNLe": 5,
-    "summary": "Watch Episode 1 of Season 1.",
-    "videoUrl": "https://youtu.be/OnigT4KtVJY?si=8X53J3Adn9ajdv7p"
+    "summary": "Amazing morning",
+    "videoUrl": "https://res.cloudinary.com/xecpjwgv/video/upload/v1795626279/video_46ac9120-bb05-4074-b354-6225f48e87ed.mp4"
   },
   {
-    "id": "EP2",
-    "number": "Episode 2",
-    "duration": "15 mins",
+    "id": "EP5",
+    "number": "Episode 5",
+    "duration": "01:17:28",
     "priceNLe": 5,
-    "summary": "Add your episode 2 description here.",
-    "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
+    "summary": "Amazing Christian movies",
+    "videoUrl": "https://res.cloudinary.com/xecpjwgv/video/upload/YOUR_EPISODE_5_LINK.mp4"
   },
   {
-    "id": "EP3",
-    "number": "Episode 3",
-    "duration": "15 mins",
+    "id": "EP6",
+    "number": "Episode 6",
+    "duration": "15:00",
     "priceNLe": 5,
-    "summary": "Add your episode 3 description here.",
-    "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"
+    "summary": "Next episode summary",
+    "videoUrl": ""
   }
 ]
