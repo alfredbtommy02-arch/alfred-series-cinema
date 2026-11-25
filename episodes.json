@@ -6,21 +6,5 @@
     "priceNLe": 5,
     "summary": "Amazing morning",
     "videoUrl": "https://res.cloudinary.com/xecpjwgv/video/upload/v1795626279/video_46ac9120-bb05-4074-b354-6225f48e87ed.mp4"
-  },
-  {
-    "id": "EP5",
-    "number": "Episode 5",
-    "duration": "01:17:28",
-    "priceNLe": 5,
-    "summary": "Amazing Christian movies",
-    "videoUrl": "https://res.cloudinary.com/xecpjwgv/video/upload/YOUR_EPISODE_5_LINK.mp4"
-  },
-  {
-    "id": "EP6",
-    "number": "Episode 6",
-    "duration": "15:00",
-    "priceNLe": 5,
-    "summary": "Next episode summary",
-    "videoUrl": ""
   }
 ]
