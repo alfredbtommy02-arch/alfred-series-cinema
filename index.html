@@ -12,7 +12,7 @@
             <h1 class="text-2xl font-extrabold tracking-tight text-amber-400">Series Cinema</h1>
             <p class="text-sm text-slate-300">Pay in Leones (NLe) • Unlock Code Access</p>
             <div class="pt-1">
-                <button onclick="openOwnerManager()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-bold transition shadow">
+                <button type="button" onclick="openOwnerManager()" class="bg-emerald-600 hover:bg-emerald-500 text-white px-4 py-2 rounded-xl text-sm font-bold transition shadow">
                     Owner Code Manager
                 </button>
             </div>
@@ -28,7 +28,7 @@
         <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-5 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between">
                 <h2 id="modalTitle" class="text-lg font-bold text-amber-400">Unlock Episode</h2>
-                <button onclick="closeUnlockModal()" class="text-slate-400 hover:text-white text-xl leading-none">&times;</button>
+                <button type="button" onclick="closeUnlockModal()" class="text-slate-400 hover:text-white text-xl leading-none">&times;</button>
             </div>
             <p id="modalSummary" class="text-sm text-slate-300"></p>
             <div class="bg-slate-900/80 border border-slate-700 rounded-xl p-3 text-xs text-slate-300 space-y-1">
@@ -43,10 +43,10 @@
                 <p id="unlockError" class="text-xs text-rose-400 hidden"></p>
             </div>
             <div class="flex flex-col sm:flex-row gap-2 pt-1">
-                <button onclick="verifyUnlockCode()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 py-2.5 rounded-xl text-sm font-extrabold transition">
+                <button type="button" onclick="verifyUnlockCode()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 py-2.5 rounded-xl text-sm font-extrabold transition">
                     Verify &amp; Unlock
                 </button>
-                <button onclick="triggerWhatsAppFromModal()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 rounded-xl text-sm font-bold transition">
+                <button type="button" onclick="triggerWhatsAppFromModal()" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 rounded-xl text-sm font-bold transition">
                     Request on WhatsApp
                 </button>
             </div>
@@ -58,19 +58,19 @@
         <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-5 space-y-4 shadow-2xl">
             <div class="flex items-center justify-between">
                 <h2 class="text-lg font-bold text-emerald-400">Owner Code Manager</h2>
-                <button onclick="closeOwnerManager()" class="text-slate-400 hover:text-white text-xl leading-none">&times;</button>
+                <button type="button" onclick="closeOwnerManager()" class="text-slate-400 hover:text-white text-xl leading-none">&times;</button>
             </div>
             <div class="space-y-2">
                 <label for="ownerEpisodeSelect" class="block text-xs font-semibold text-slate-300">Select Episode</label>
                 <select id="ownerEpisodeSelect" class="w-full bg-slate-900 border border-slate-600 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-emerald-400"></select>
             </div>
-            <button onclick="generateCodeForSelectedEpisode()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 rounded-xl text-sm font-bold transition">
+            <button type="button" onclick="generateCodeForSelectedEpisode()" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-2.5 rounded-xl text-sm font-bold transition">
                 Generate Unlock Code
             </button>
             <div id="generatedCodeBox" class="hidden bg-slate-900 border border-slate-700 rounded-xl p-3 space-y-2">
                 <p class="text-xs text-slate-400">Generated Code:</p>
                 <p id="generatedCodeValue" class="font-mono text-base font-bold text-amber-300 break-all"></p>
-                <button onclick="copyGeneratedCode()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition">
+                <button type="button" onclick="copyGeneratedCode()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-1.5 rounded-lg text-xs font-semibold transition">
                     Copy Code
                 </button>
             </div>
@@ -82,6 +82,7 @@
         const WHATSAPP_NUMBER = "23276000000";
         const UNLOCK_STORAGE_KEY = "series_cinema_unlocked_v1";
         const CODE_SECRET = "SERIES_CINEMA_KEY_2026";
+        const OWNER_PIN = "2537";
 
         let episodesData = [];
         let activeEpisode = null;
@@ -200,6 +201,13 @@
         }
 
         function openOwnerManager() {
+            const enteredPin = window.prompt("Enter Owner PIN:");
+            if (enteredPin === null) return;
+            if (String(enteredPin).trim() !== OWNER_PIN) {
+                window.alert("Incorrect PIN.");
+                return;
+            }
+
             const select = document.getElementById("ownerEpisodeSelect");
             select.innerHTML = episodesData.map(ep => {
                 const label = `${ep.id} — ${ep.number || "Episode"}`;
