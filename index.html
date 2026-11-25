@@ -127,7 +127,7 @@
                 <span class="bg-emerald-100 text-emerald-800 text-[11px] font-bold px-2.5 py-1 rounded-full">Free Preview</span>
             </div>
             <div class="aspect-video w-full bg-slate-950 rounded-2xl overflow-hidden border border-slate-200">
-                <video controls playsinline preload="none" class="w-full h-full object-cover">
+                <video controls playsinline preload="metadata" class="w-full h-full object-cover">
                     <source src="https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4" type="video/mp4">
                     Your browser does not support video playback.
                 </video>
@@ -484,10 +484,11 @@
                         ${unlocked ? `
                             <div class="space-y-2">
                                 <div class="aspect-video w-full bg-slate-950 rounded-xl overflow-hidden border border-emerald-500/40">
-                                    <video controls playsinline preload="none" class="w-full h-full object-cover" onerror="document.getElementById('err-${ep.id}').classList.remove('hidden')">
+                                    <video controls playsinline preload="auto" class="w-full h-full object-cover" onwaiting="document.getElementById('buf-${ep.id}').classList.remove('hidden')" onplaying="document.getElementById('buf-${ep.id}').classList.add('hidden')" onerror="document.getElementById('err-${ep.id}').classList.remove('hidden')">
                                         <source src="${ep.videoUrl}" type="video/mp4">
                                     </video>
                                 </div>
+                                <p id="buf-${ep.id}" class="hidden text-[11px] text-slate-600 font-medium">Buffering video stream...</p>
                                 <p id="err-${ep.id}" class="hidden text-[11px] text-amber-800 bg-amber-50 border border-amber-300 rounded-lg p-2">
                                     Video stream couldn't load inline. <a href="${ep.videoUrl}" target="_blank" rel="noopener" class="underline font-bold">Open video directly</a>
                                 </p>
