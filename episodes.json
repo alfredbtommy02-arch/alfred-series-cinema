@@ -1,0 +1,26 @@
+[
+  {
+    "id": "EP1",
+    "number": "Episode 1",
+    "duration": "01:51:05",
+    "priceNLe": 5,
+    "summary": "Watch Episode 1 of Season 1.",
+    "videoUrl": "https://youtu.be/OnigT4KtVJY?si=8X53J3Adn9ajdv7p"
+  },
+  {
+    "id": "EP2",
+    "number": "Episode 2",
+    "duration": "15 mins",
+    "priceNLe": 5,
+    "summary": "Add your episode 2 description here.",
+    "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
+  },
+  {
+    "id": "EP3",
+    "number": "Episode 3",
+    "duration": "15 mins",
+    "priceNLe": 5,
+    "summary": "Add your episode 3 description here.",
+    "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"
+  }
+]
