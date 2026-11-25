@@ -64,15 +64,14 @@
 
             <div class="border-t border-slate-200 pt-4 space-y-2.5">
                 <div class="flex justify-between items-center flex-wrap gap-2">
-                    <h3 class="text-sm font-extrabold text-amber-900">Add New Episode</h3>
-                    <span class="text-[11px] text-slate-500">Paste a YouTube link (youtu.be/... or youtube.com/watch?v=...) or .mp4 URL</span>
+                    <h3 class="text-sm font-extrabold text-amber-900">Local Preview Only: Add New Episode</h3>
+                    <span class="text-[11px] text-slate-500">Saved in this browser only — edit episodes.json on GitHub for all visitors</span>
                 </div>
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                    <input type="text" id="new-ep-title" placeholder="Episode Title *" class="bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     <input type="text" id="new-ep-duration" placeholder="Duration (e.g. 06:25)" class="bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
-                    <input type="number" id="new-ep-price" placeholder="Price NLe (default 10)" value="10" min="1" class="bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
+                    <input type="number" id="new-ep-price" placeholder="Price NLe (NLe 5)" value="5" min="1" class="bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
                 </div>
-                <input type="text" id="new-ep-summary" placeholder="Short episode summary..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
+                <input type="text" id="new-ep-summary" placeholder="Video description..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
                 <input type="text" id="new-ep-url" placeholder="YouTube Link or Direct .mp4 URL *" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
                 <div class="flex flex-col sm:flex-row gap-2.5">
                     <button onclick="addCustomEpisode()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl py-2.5 px-4 text-xs font-extrabold shadow">
@@ -95,13 +94,13 @@
                     </span>
                     <h2 class="text-2xl sm:text-3xl font-black text-slate-900">Featured Video Series</h2>
                     <p class="text-xs sm:text-sm text-slate-600 max-w-2xl">
-                        Watch the free trailer below, pay in <strong>New Leones (NLe)</strong> via mobile money, and enter your unlock code to watch full episodes.
+                        Watch the free trailer below, pay <strong>NLe 5 per episode</strong> via mobile money, and enter your unlock code to watch full episodes.
                     </p>
                 </div>
                 <div class="bg-amber-50 border border-amber-600/35 rounded-2xl p-4 text-center shrink-0 w-full md:w-auto">
-                    <p class="text-[11px] uppercase font-bold text-amber-800">Full Season Pass</p>
-                    <p class="text-2xl font-black text-amber-950">NLe 25</p>
-                    <p class="text-[11px] text-slate-600">Or NLe 10 per episode</p>
+                    <p class="text-[11px] uppercase font-bold text-amber-800">Every Episode</p>
+                    <p class="text-2xl font-black text-amber-950">NLe 5</p>
+                    <p class="text-[11px] text-slate-600">Any length • NLe 5 each</p>
                 </div>
             </div>
 
@@ -111,7 +110,7 @@
                     <p class="text-[11px] text-slate-300">Enter your code to open your unlocked episodes.</p>
                 </div>
                 <div class="flex gap-2">
-                    <input type="text" id="viewer-code-input" placeholder="e.g. AE-SEASON-1234" class="bg-slate-800 border border-amber-400/50 rounded-xl px-3.5 py-2 text-xs font-mono uppercase text-white outline-none w-36 sm:w-44">
+                    <input type="text" id="viewer-code-input" placeholder="e.g. AE-EP1-1234" class="bg-slate-800 border border-amber-400/50 rounded-xl px-3.5 py-2 text-xs font-mono uppercase text-white outline-none w-36 sm:w-44">
                     <button onclick="redeemUnlockCode()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs px-4 py-2 rounded-xl transition">
                         Unlock
                     </button>
@@ -138,7 +137,7 @@
         <section class="space-y-3">
             <div class="flex justify-between items-center px-1">
                 <h3 class="text-lg font-extrabold luxury-gold-title">Episodes</h3>
-                <span class="text-xs text-slate-500 font-medium">Pay in NLe • Stream Anytime</span>
+                <span class="text-xs text-slate-500 font-medium">NLe 5 per video • Stream Anytime</span>
             </div>
             <div id="episodes-grid" class="grid grid-cols-1 md:grid-cols-3 gap-5"></div>
         </section>
@@ -154,8 +153,8 @@
             </div>
 
             <div class="bg-amber-50 border border-amber-600/30 rounded-xl p-3.5 text-xs space-y-1.5">
-                <p class="font-extrabold text-amber-950" id="pay-item-label">Full Season Pass — NLe 25</p>
-                <p class="text-slate-700">1. Send <strong id="pay-amount-text">NLe 25</strong> via mobile money to:</p>
+                <p class="font-extrabold text-amber-950" id="pay-item-label">Episode — NLe 5</p>
+                <p class="text-slate-700">1. Send <strong id="pay-amount-text">NLe 5</strong> via mobile money to:</p>
                 <p class="font-mono font-extrabold text-sm text-amber-900 bg-white px-3 py-1.5 rounded-lg border border-amber-600/25">
                     +232 76 655 025
                 </p>
@@ -188,38 +187,38 @@
         const CODES_STORAGE_KEY = "series_cinema_issued_codes_v1";
         const UNLOCKED_STORAGE_KEY = "series_cinema_unlocked_passes_v1";
         const CUSTOM_EPISODES_KEY = "series_cinema_custom_episodes_v1";
+        const EPISODES_JSON_URL = "./episodes.json";
+        const FIXED_PRICE_NLE = 5;
 
         const DEFAULT_EPISODES = [
             {
                 id: "EP1",
                 number: "Episode 1",
-                title: "Episode 1 — Premiere",
                 duration: "01:51:05",
-                priceNLe: 10,
+                priceNLe: FIXED_PRICE_NLE,
                 summary: "Watch Episode 1 of Season 1.",
                 videoUrl: "https://youtu.be/OnigT4KtVJY?si=8X53J3Adn9ajdv7p"
             },
             {
                 id: "EP2",
                 number: "Episode 2",
-                title: "Episode 2 Title",
                 duration: "15 mins",
-                priceNLe: 10,
+                priceNLe: FIXED_PRICE_NLE,
                 summary: "Add your episode 2 description here.",
                 videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4"
             },
             {
                 id: "EP3",
                 number: "Episode 3",
-                title: "Episode 3 Title",
                 duration: "15 mins",
-                priceNLe: 10,
+                priceNLe: FIXED_PRICE_NLE,
                 summary: "Add your episode 3 description here.",
                 videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4"
             }
         ];
 
-        let selectedOffer = { label: "Full Season Pass (All Episodes)", amount: 25 };
+        let remoteEpisodes = null;
+        let selectedOffer = { label: "Episode 1", amount: FIXED_PRICE_NLE };
         let ownerUnlocked = false;
 
         function extractYouTubeId(input) {
@@ -262,7 +261,7 @@
                         <div class="aspect-video w-full bg-slate-950 rounded-xl overflow-hidden border border-emerald-500/40">
                             <iframe
                                 src="${embedUrl}"
-                                title="${ep.title}"
+                                title="${ep.number}"
                                 class="w-full h-full"
                                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                                 referrerpolicy="strict-origin-when-cross-origin"
@@ -298,6 +297,23 @@
             `;
         }
 
+        function normalizeEpisodeList(rawList, startIndex = 1) {
+            if (!Array.isArray(rawList)) return [];
+            return rawList
+                .filter(item => item && typeof item === "object" && item.videoUrl)
+                .map((item, idx) => {
+                    const num = startIndex + idx;
+                    return {
+                        id: item.id || `EP${num}`,
+                        number: item.number || `Episode ${num}`,
+                        duration: item.duration || "10 mins",
+                        priceNLe: FIXED_PRICE_NLE,
+                        summary: item.summary || item.title || "Watch full video.",
+                        videoUrl: String(item.videoUrl).trim()
+                    };
+                });
+        }
+
         function getCustomEpisodes() {
             try {
                 const raw = JSON.parse(localStorage.getItem(CUSTOM_EPISODES_KEY) || "[]");
@@ -311,8 +327,30 @@
             try { localStorage.setItem(CUSTOM_EPISODES_KEY, JSON.stringify(list)); } catch (e) {}
         }
 
+        function getBaseEpisodes() {
+            if (Array.isArray(remoteEpisodes) && remoteEpisodes.length > 0) {
+                return normalizeEpisodeList(remoteEpisodes, 1);
+            }
+            return DEFAULT_EPISODES;
+        }
+
         function getAllEpisodes() {
-            return [...DEFAULT_EPISODES, ...getCustomEpisodes()];
+            const base = getBaseEpisodes();
+            const custom = normalizeEpisodeList(getCustomEpisodes(), base.length + 1);
+            return [...base, ...custom];
+        }
+
+        async function loadRemoteEpisodes() {
+            try {
+                const res = await fetch(`${EPISODES_JSON_URL}?t=${Date.now()}`, { cache: "no-store" });
+                if (!res.ok) return;
+                const data = await res.json();
+                if (Array.isArray(data) && data.length > 0) {
+                    remoteEpisodes = data;
+                    syncPassTypeOptions();
+                    renderEpisodes();
+                }
+            } catch (e) {}
         }
 
         function syncPassTypeOptions() {
@@ -321,8 +359,8 @@
             const currentVal = select.value;
             const episodes = getAllEpisodes();
             select.innerHTML = [
-                `<option value="SEASON">Full Season Pass (All Episodes)</option>`,
-                ...episodes.map(ep => `<option value="${ep.id}">${ep.number} Only (${ep.title})</option>`)
+                ...episodes.map(ep => `<option value="${ep.id}">${ep.number} — NLe ${FIXED_PRICE_NLE}</option>`),
+                `<option value="SEASON">All Episodes Pass</option>`
             ].join("");
             if ([...select.options].some(o => o.value === currentVal)) {
                 select.value = currentVal;
@@ -330,18 +368,15 @@
         }
 
         function addCustomEpisode() {
-            const title = document.getElementById("new-ep-title").value.trim();
             const duration = document.getElementById("new-ep-duration").value.trim() || "10 mins";
-            const priceVal = parseInt(document.getElementById("new-ep-price").value, 10);
-            const priceNLe = Number.isFinite(priceVal) && priceVal > 0 ? priceVal : 10;
-            const summary = document.getElementById("new-ep-summary").value.trim() || "New episode available to stream.";
+            const summary = document.getElementById("new-ep-summary").value.trim();
             const videoUrl = document.getElementById("new-ep-url").value.trim();
             const feedback = document.getElementById("owner-ep-feedback");
             feedback.classList.remove("hidden");
 
-            if (!title || !videoUrl) {
+            if (!summary || !videoUrl) {
                 feedback.className = "text-xs font-bold text-red-600";
-                feedback.innerText = "Please enter both an Episode Title and a YouTube or .mp4 Video URL.";
+                feedback.innerText = "Please enter both a video description and a YouTube or .mp4 Video URL.";
                 return;
             }
 
@@ -356,21 +391,19 @@
             custom.push({
                 id: `EP${nextNum}`,
                 number: `Episode ${nextNum}`,
-                title,
                 duration,
-                priceNLe,
+                priceNLe: FIXED_PRICE_NLE,
                 summary,
                 videoUrl
             });
             saveCustomEpisodes(custom);
 
-            document.getElementById("new-ep-title").value = "";
             document.getElementById("new-ep-duration").value = "";
             document.getElementById("new-ep-summary").value = "";
             document.getElementById("new-ep-url").value = "";
 
-            feedback.className = "text-xs font-bold text-emerald-700";
-            feedback.innerText = `Added Episode ${nextNum} ("${title}") to this browser.`;
+            feedback.className = "text-xs font-bold text-amber-800";
+            feedback.innerText = `Added Episode ${nextNum} in this browser only. Add it to episodes.json on GitHub for all visitors.`;
             syncPassTypeOptions();
             renderEpisodes();
         }
@@ -380,7 +413,7 @@
             const feedback = document.getElementById("owner-ep-feedback");
             feedback.classList.remove("hidden");
             feedback.className = "text-xs font-bold text-slate-700";
-            feedback.innerText = "Reset added episodes back to the default list.";
+            feedback.innerText = "Reset local browser episodes.";
             syncPassTypeOptions();
             renderEpisodes();
         }
@@ -503,10 +536,21 @@
             renderEpisodes();
         }
 
-        function openPayModal(label, amount) {
-            selectedOffer = { label, amount };
-            document.getElementById("pay-item-label").innerText = `${label} — NLe ${amount}`;
-            document.getElementById("pay-amount-text").innerText = `NLe ${amount}`;
+        function redirectToWhatsAppForEpisode(epNumber, epSummary, amount = FIXED_PRICE_NLE) {
+            openPayModal(epNumber, amount);
+
+            const msg = [
+                `Hello, I want to watch ${epNumber} (${epSummary}) on Series Cinema.`,
+                `Please send me the Unlock Code so I can view it (NLe ${amount}).`
+            ].join("\n");
+
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank");
+        }
+
+        function openPayModal(label, amount = FIXED_PRICE_NLE) {
+            selectedOffer = { label, amount: FIXED_PRICE_NLE };
+            document.getElementById("pay-item-label").innerText = `${label} — NLe ${FIXED_PRICE_NLE}`;
+            document.getElementById("pay-amount-text").innerText = `NLe ${FIXED_PRICE_NLE}`;
             document.getElementById("pay-modal").classList.remove("hidden");
         }
 
@@ -527,7 +571,7 @@
 
             const msg = [
                 "Hello, I just paid for the Video Series:",
-                `• Package: ${selectedOffer.label} (NLe ${selectedOffer.amount})`,
+                `• Episode: ${selectedOffer.label} (NLe ${FIXED_PRICE_NLE})`,
                 `• Viewer Name: ${name}`,
                 `• Payment Phone: ${phone}`,
                 `• Payment Method: ${network}`,
@@ -544,27 +588,25 @@
             const episodes = getAllEpisodes();
             grid.innerHTML = episodes.map(ep => {
                 const unlocked = isEpisodeUnlocked(ep.id);
+                const safeNumber = String(ep.number).replace(/'/g, "\\'");
+                const safeSummary = String(ep.summary).replace(/'/g, "\\'");
                 return `
                     <div class="luxury-card p-4 flex flex-col justify-between space-y-3">
                         <div class="space-y-2">
                             <div class="flex justify-between items-center">
                                 <span class="text-[11px] font-extrabold uppercase text-amber-800">${ep.number} • ${ep.duration}</span>
                                 <span class="text-[11px] font-bold px-2.5 py-0.5 rounded-full ${unlocked ? "bg-emerald-100 text-emerald-800" : "bg-amber-100 text-amber-900"}">
-                                    ${unlocked ? "Unlocked" : `NLe ${ep.priceNLe}`}
+                                    ${unlocked ? "Unlocked" : `NLe ${FIXED_PRICE_NLE}`}
                                 </span>
                             </div>
-                            <h4 class="font-extrabold text-slate-900 text-base">${ep.title}</h4>
-                            <p class="text-xs text-slate-600">${ep.summary}</p>
+                            <p class="text-xs sm:text-sm text-slate-700 font-medium">${ep.summary}</p>
                         </div>
 
                         ${unlocked ? renderUnlockedPlayer(ep) : `
                             <div class="bg-slate-900 text-white rounded-xl p-4 text-center space-y-2.5">
-                                <p class="text-xs font-bold text-amber-300">Locked Episode</p>
-                                <button onclick="openPayModal('${ep.number}: ${ep.title.replace(/'/g, "\\'")}', ${ep.priceNLe})" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 py-2 rounded-xl font-extrabold text-xs transition">
-                                    Unlock Episode (NLe ${ep.priceNLe})
-                                </button>
-                                <button onclick="openPayModal('Full Season Pass (All Episodes)', 25)" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white py-2 rounded-xl font-bold text-xs transition">
-                                    Unlock All Episodes (NLe 25)
+                                <p class="text-xs font-bold text-amber-300">Locked Video</p>
+                                <button onclick="redirectToWhatsAppForEpisode('${safeNumber}', '${safeSummary}', ${FIXED_PRICE_NLE})" class="w-full bg-amber-500 hover:bg-amber-400 text-slate-950 py-2 rounded-xl font-extrabold text-xs transition">
+                                    Unlock ${ep.number} (NLe ${FIXED_PRICE_NLE})
                                 </button>
                             </div>
                         `}
@@ -575,6 +617,7 @@
 
         syncPassTypeOptions();
         renderEpisodes();
+        loadRemoteEpisodes();
     </script>
 </body>
 </html>
