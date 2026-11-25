@@ -484,13 +484,18 @@
                         ${unlocked ? `
                             <div class="space-y-2">
                                 <div class="aspect-video w-full bg-slate-950 rounded-xl overflow-hidden border border-emerald-500/40">
-                                    <video controls playsinline preload="auto" class="w-full h-full object-cover" onwaiting="document.getElementById('buf-${ep.id}').classList.remove('hidden')" onplaying="document.getElementById('buf-${ep.id}').classList.add('hidden')" onerror="document.getElementById('err-${ep.id}').classList.remove('hidden')">
+                                    <video controls playsinline preload="metadata" class="w-full h-full object-cover" onwaiting="document.getElementById('buf-${ep.id}').classList.remove('hidden')" onplaying="document.getElementById('buf-${ep.id}').classList.add('hidden')" onerror="document.getElementById('err-${ep.id}').classList.remove('hidden')">
                                         <source src="${ep.videoUrl}" type="video/mp4">
                                     </video>
                                 </div>
-                                <p id="buf-${ep.id}" class="hidden text-[11px] text-slate-600 font-medium">Buffering video stream...</p>
+                                <div class="flex items-center justify-between gap-2 text-[11px]">
+                                    <span id="buf-${ep.id}" class="hidden text-amber-800 font-semibold">Buffering...</span>
+                                    <a href="${ep.videoUrl}" target="_blank" rel="noopener" class="ml-auto text-emerald-800 hover:underline font-bold">
+                                        Open Fast Direct Stream ↗
+                                    </a>
+                                </div>
                                 <p id="err-${ep.id}" class="hidden text-[11px] text-amber-800 bg-amber-50 border border-amber-300 rounded-lg p-2">
-                                    Video stream couldn't load inline. <a href="${ep.videoUrl}" target="_blank" rel="noopener" class="underline font-bold">Open video directly</a>
+                                    Inline player could not load. Tap <strong>Open Fast Direct Stream</strong> above.
                                 </p>
                             </div>
                         ` : `
