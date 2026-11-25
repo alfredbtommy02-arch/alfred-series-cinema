@@ -45,27 +45,48 @@
 
     <main class="max-w-5xl mx-auto p-4 space-y-6 mt-2">
 
-        <section id="owner-panel" class="hidden bg-white border-2 border-emerald-600 rounded-2xl p-5 shadow-xl space-y-4">
+        <section id="owner-panel" class="hidden bg-white border-2 border-emerald-600 rounded-2xl p-5 shadow-xl space-y-5">
             <div class="flex justify-between items-center border-b border-slate-200 pb-2.5">
                 <h2 class="text-base font-extrabold text-emerald-800">Owner Unlock Code Manager</h2>
                 <button onclick="toggleOwnerPanel()" class="text-xs bg-red-600 text-white px-3 py-1 rounded-lg font-bold">Close</button>
             </div>
-            <p class="text-xs text-slate-600">
-                After verifying a viewer's Orange Money, QMoney, or AfriMoney payment on WhatsApp, create a code below and send it to them.
-            </p>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                <input type="text" id="gen-customer-name" placeholder="Viewer Name (e.g. Mariama)" class="bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
-                <select id="gen-pass-type" class="bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs font-semibold">
-                    <option value="SEASON">Full Season Pass (All Episodes)</option>
-                    <option value="EP1">Episode 1 Only</option>
-                    <option value="EP2">Episode 2 Only</option>
-                    <option value="EP3">Episode 3 Only</option>
-                </select>
-                <button onclick="generateUnlockCode()" class="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl py-2.5 px-4 text-xs font-extrabold shadow">
-                    + Create Unlock Code
-                </button>
+
+            <div class="space-y-3">
+                <p class="text-xs text-slate-600">
+                    After verifying a viewer's Orange Money, QMoney, or AfriMoney payment on WhatsApp, create a code below and send it to them.
+                </p>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    <input type="text" id="gen-customer-name" placeholder="Viewer Name (e.g. Mariama)" class="bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
+                    <select id="gen-pass-type" class="bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs font-semibold"></select>
+                    <button onclick="generateUnlockCode()" class="bg-emerald-600 hover:bg-emerald-500 text-white rounded-xl py-2.5 px-4 text-xs font-extrabold shadow">
+                        + Create Unlock Code
+                    </button>
+                </div>
+                <div id="generated-codes-list" class="space-y-2 max-h-40 overflow-y-auto pt-1"></div>
             </div>
-            <div id="generated-codes-list" class="space-y-2 max-h-48 overflow-y-auto pt-1"></div>
+
+            <div class="border-t border-slate-200 pt-4 space-y-2.5">
+                <div class="flex justify-between items-center flex-wrap gap-2">
+                    <h3 class="text-sm font-extrabold text-amber-900">Add New Episode</h3>
+                    <span class="text-[11px] text-slate-500">Paste a direct .mp4 URL (like https://files.catbox.moe/...)</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                    <input type="text" id="new-ep-title" placeholder="Episode Title *" class="bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
+                    <input type="text" id="new-ep-duration" placeholder="Duration (e.g. 06:25)" class="bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
+                    <input type="number" id="new-ep-price" placeholder="Price NLe (default 10)" value="10" min="1" class="bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
+                </div>
+                <input type="text" id="new-ep-summary" placeholder="Short episode summary..." class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
+                <input type="url" id="new-ep-url" placeholder="Direct .mp4 Video URL (https://...) *" class="w-full bg-slate-50 border border-slate-300 rounded-xl p-2.5 text-xs">
+                <div class="flex flex-col sm:flex-row gap-2.5">
+                    <button onclick="addCustomEpisode()" class="flex-1 bg-amber-500 hover:bg-amber-400 text-slate-950 rounded-xl py-2.5 px-4 text-xs font-extrabold shadow">
+                        + Add Episode to Page
+                    </button>
+                    <button onclick="clearCustomEpisodes()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl py-2.5 px-4 text-xs font-bold">
+                        Reset Added Episodes
+                    </button>
+                </div>
+                <p id="owner-ep-feedback" class="hidden text-xs font-bold"></p>
+            </div>
         </section>
 
         <section class="luxury-card p-5 sm:p-7 space-y-4">
@@ -165,16 +186,17 @@
         const OWNER_PIN = "2537";
         const CODES_STORAGE_KEY = "alfred_series_issued_codes_v1";
         const UNLOCKED_STORAGE_KEY = "alfred_series_unlocked_passes_v1";
+        const CUSTOM_EPISODES_KEY = "alfred_series_custom_episodes_v1";
 
-        const EPISODES = [
+        const DEFAULT_EPISODES = [
             {
                 id: "EP1",
                 number: "Episode 1",
-                title: "Episode 1 Title",
-                duration: "15 mins",
+                title: "Episode 1 — Premiere",
+                duration: "06:25",
                 priceNLe: 10,
-                summary: "Add your episode 1 description here.",
-                videoUrl: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4"
+                summary: "Watch the opening episode of Season 1 in full HD.",
+                videoUrl: "https://files.catbox.moe/2fa1rz.mp4"
             },
             {
                 id: "EP2",
@@ -198,6 +220,94 @@
 
         let selectedOffer = { label: "Full Season Pass (All Episodes)", amount: 25 };
         let ownerUnlocked = false;
+
+        function getCustomEpisodes() {
+            try {
+                const raw = JSON.parse(localStorage.getItem(CUSTOM_EPISODES_KEY) || "[]");
+                return Array.isArray(raw) ? raw : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function saveCustomEpisodes(list) {
+            try { localStorage.setItem(CUSTOM_EPISODES_KEY, JSON.stringify(list)); } catch (e) {}
+        }
+
+        function getAllEpisodes() {
+            return [...DEFAULT_EPISODES, ...getCustomEpisodes()];
+        }
+
+        function syncPassTypeOptions() {
+            const select = document.getElementById("gen-pass-type");
+            if (!select) return;
+            const currentVal = select.value;
+            const episodes = getAllEpisodes();
+            select.innerHTML = [
+                `<option value="SEASON">Full Season Pass (All Episodes)</option>`,
+                ...episodes.map(ep => `<option value="${ep.id}">${ep.number} Only (${ep.title})</option>`)
+            ].join("");
+            if ([...select.options].some(o => o.value === currentVal)) {
+                select.value = currentVal;
+            }
+        }
+
+        function addCustomEpisode() {
+            const title = document.getElementById("new-ep-title").value.trim();
+            const duration = document.getElementById("new-ep-duration").value.trim() || "10 mins";
+            const priceVal = parseInt(document.getElementById("new-ep-price").value, 10);
+            const priceNLe = Number.isFinite(priceVal) && priceVal > 0 ? priceVal : 10;
+            const summary = document.getElementById("new-ep-summary").value.trim() || "New episode available to stream.";
+            const videoUrl = document.getElementById("new-ep-url").value.trim();
+            const feedback = document.getElementById("owner-ep-feedback");
+            feedback.classList.remove("hidden");
+
+            if (!title || !videoUrl) {
+                feedback.className = "text-xs font-bold text-red-600";
+                feedback.innerText = "Please enter both an Episode Title and a direct .mp4 Video URL.";
+                return;
+            }
+
+            if (!/^https?:\/\//i.test(videoUrl)) {
+                feedback.className = "text-xs font-bold text-red-600";
+                feedback.innerText = "Video URL must start with https:// or http://.";
+                return;
+            }
+
+            const all = getAllEpisodes();
+            const nextNum = all.length + 1;
+            const custom = getCustomEpisodes();
+            custom.push({
+                id: `EP${nextNum}`,
+                number: `Episode ${nextNum}`,
+                title,
+                duration,
+                priceNLe,
+                summary,
+                videoUrl
+            });
+            saveCustomEpisodes(custom);
+
+            document.getElementById("new-ep-title").value = "";
+            document.getElementById("new-ep-duration").value = "";
+            document.getElementById("new-ep-summary").value = "";
+            document.getElementById("new-ep-url").value = "";
+
+            feedback.className = "text-xs font-bold text-emerald-700";
+            feedback.innerText = `Added Episode ${nextNum} ("${title}") to this browser.`;
+            syncPassTypeOptions();
+            renderEpisodes();
+        }
+
+        function clearCustomEpisodes() {
+            saveCustomEpisodes([]);
+            const feedback = document.getElementById("owner-ep-feedback");
+            feedback.classList.remove("hidden");
+            feedback.className = "text-xs font-bold text-slate-700";
+            feedback.innerText = "Reset added episodes back to the default list.";
+            syncPassTypeOptions();
+            renderEpisodes();
+        }
 
         function getIssuedCodes() {
             try {
@@ -241,6 +351,7 @@
                 ownerUnlocked = true;
             }
             panel.classList.toggle("hidden");
+            syncPassTypeOptions();
             renderIssuedCodes();
         }
 
@@ -296,7 +407,7 @@
             }
 
             const issued = getIssuedCodes().find(c => c.code.toUpperCase() === raw);
-            const formatMatch = raw.match(/^AE-(SEASON|EP1|EP2|EP3)-\d{4}$/);
+            const formatMatch = raw.match(/^AE-(SEASON|EP\d+)-\d{4}$/);
 
             if (!issued && !formatMatch) {
                 feedback.className = "text-xs font-bold text-red-600";
@@ -354,7 +465,8 @@
 
         function renderEpisodes() {
             const grid = document.getElementById("episodes-grid");
-            grid.innerHTML = EPISODES.map(ep => {
+            const episodes = getAllEpisodes();
+            grid.innerHTML = episodes.map(ep => {
                 const unlocked = isEpisodeUnlocked(ep.id);
                 return `
                     <div class="luxury-card p-4 flex flex-col justify-between space-y-3">
@@ -391,6 +503,7 @@
             }).join("");
         }
 
+        syncPassTypeOptions();
         renderEpisodes();
     </script>
 </body>
