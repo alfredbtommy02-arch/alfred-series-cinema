@@ -20,7 +20,7 @@
         </header>
 
         <main id="episodesContainer" class="space-y-4">
-            <p class="text-center text-stone-500 text-sm py-8">Loading episodes...</p>
+            <p class="text-center text-stone-500 text-sm py-8">Loading videos...</p>
         </main>
     </div>
 
@@ -28,10 +28,10 @@
     <div id="unlockModal" class="fixed inset-0 bg-stone-950/50 backdrop-blur-[2px] hidden items-center justify-center p-4 z-50">
         <div class="bg-white border border-stone-200 rounded-2xl max-w-md w-full p-5 sm:p-6 space-y-4 shadow-xl text-stone-900">
             <div class="flex items-center justify-between border-b border-stone-100 pb-3">
-                <h2 id="modalTitle" class="text-lg font-bold text-stone-900">Unlock Episode</h2>
+                <h2 id="modalTitle" class="text-lg font-bold text-stone-900">Unlock Video</h2>
                 <button type="button" onclick="closeUnlockModal()" class="text-stone-400 hover:text-stone-700 text-2xl leading-none px-1">&times;</button>
             </div>
-            <p id="modalSummary" class="text-sm text-stone-600 leading-relaxed"></p>
+            <p id="modalSummary" class="text-sm text-stone-700 font-medium leading-relaxed"></p>
             <div class="bg-stone-50 border border-stone-200/80 rounded-xl p-3.5 text-xs text-stone-700 space-y-1.5">
                 <p><strong class="text-stone-900">Price:</strong> NLe <span id="modalPrice">5</span></p>
                 <p>1. Pay NLe <span id="modalPriceStep">5</span> via mobile money / agreed method.</p>
@@ -62,7 +62,7 @@
                 <button type="button" onclick="closeOwnerManager()" class="text-stone-400 hover:text-stone-700 text-2xl leading-none px-1">&times;</button>
             </div>
             <div class="space-y-1.5">
-                <label for="ownerEpisodeSelect" class="block text-xs font-semibold text-stone-700">Select Episode</label>
+                <label for="ownerEpisodeSelect" class="block text-xs font-semibold text-stone-700">Select Video</label>
                 <select id="ownerEpisodeSelect" class="w-full bg-white border border-stone-300 rounded-xl px-3.5 py-2.5 text-sm text-stone-900 focus:outline-none focus:border-stone-900 focus:ring-2 focus:ring-stone-900/10"></select>
             </div>
             <button type="button" onclick="generateCodeForSelectedEpisode()" class="w-full bg-stone-900 hover:bg-stone-800 text-white py-2.5 rounded-xl text-sm font-semibold transition shadow-xs">
@@ -149,9 +149,9 @@
             return `SC-${(hash >>> 0).toString(36).toUpperCase()}`;
         }
 
-        function redirectToWhatsAppForEpisode(episodeLabel, summary, priceNLe = FIXED_PRICE_NLE) {
+        function redirectToWhatsAppForEpisode(summary, priceNLe = FIXED_PRICE_NLE) {
             const text = encodeURIComponent(
-                `Hello Series Cinema, I want to pay NLe ${priceNLe} to unlock ${episodeLabel} (${summary}). Please send my unlock code.`
+                `Hello Series Cinema, I want to pay NLe ${priceNLe} to unlock "${summary}". Please send my unlock code.`
             );
             const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
             window.open(waUrl, "_blank", "noopener,noreferrer");
@@ -160,7 +160,7 @@
         function openUnlockModal(episode) {
             activeEpisode = episode;
             const price = Number(episode.priceNLe) || FIXED_PRICE_NLE;
-            document.getElementById("modalTitle").textContent = `Unlock ${episode.number || episode.id}`;
+            document.getElementById("modalTitle").textContent = "Unlock Video";
             document.getElementById("modalSummary").textContent = episode.summary || "";
             document.getElementById("modalPrice").textContent = price;
             document.getElementById("modalPriceStep").textContent = price;
@@ -178,10 +178,9 @@
 
         function triggerWhatsAppFromModal() {
             if (!activeEpisode) return;
-            const label = activeEpisode.number || activeEpisode.id;
-            const summary = activeEpisode.summary || "";
+            const summary = activeEpisode.summary || "Video";
             const price = Number(activeEpisode.priceNLe) || FIXED_PRICE_NLE;
-            redirectToWhatsAppForEpisode(label, summary, price);
+            redirectToWhatsAppForEpisode(summary, price);
         }
 
         function verifyUnlockCode() {
@@ -211,7 +210,7 @@
 
             const select = document.getElementById("ownerEpisodeSelect");
             select.innerHTML = episodesData.map(ep => {
-                const label = `${ep.id} — ${ep.number || "Episode"}`;
+                const label = `${ep.id} — ${ep.summary || "Video"}`;
                 return `<option value="${escapeHtml(ep.id)}">${escapeHtml(label)}</option>`;
             }).join("");
             document.getElementById("generatedCodeBox").classList.add("hidden");
@@ -243,10 +242,11 @@
             const ytId = extractYouTubeId(url);
             if (ytId) {
                 return `
-                    <div class="aspect-video w-full rounded-xl overflow-hidden bg-stone-950 border border-stone-200">
+                    <div class="relative aspect-video w-full rounded-xl overflow-hidden bg-stone-950 border border-stone-200">
+                        <div class="pointer-events-none absolute top-0 inset-x-0 h-12 bg-gradient-to-b from-stone-950 via-stone-950/95 to-transparent z-10"></div>
                         <iframe
-                            src="https://www.youtube.com/embed/${escapeHtml(ytId)}?rel=0"
-                            title="${escapeHtml(ep.number || ep.id)}"
+                            src="https://www.youtube-nocookie.com/embed/${escapeHtml(ytId)}?rel=0&modestbranding=1&iv_load_policy=3"
+                            title="Video player"
                             class="w-full h-full"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowfullscreen
@@ -277,7 +277,7 @@
         function renderEpisodes() {
             const container = document.getElementById("episodesContainer");
             if (!Array.isArray(episodesData) || episodesData.length === 0) {
-                container.innerHTML = `<p class="text-center text-stone-500 text-sm py-8">No episodes found.</p>`;
+                container.innerHTML = `<p class="text-center text-stone-500 text-sm py-8">No videos found.</p>`;
                 return;
             }
 
@@ -285,19 +285,16 @@
 
             container.innerHTML = episodesData.map((ep, idx) => {
                 const epId = String(ep.id ?? `EP${idx + 1}`);
-                const epNumber = String(ep.number ?? `Episode ${idx + 1}`);
                 const duration = String(ep.duration ?? "");
                 const summary = String(ep.summary ?? "");
                 const isUnlocked = unlockedSet.has(epId);
 
-                const safeNumber = escapeHtml(epNumber);
                 const safeSummary = escapeHtml(summary);
                 const safeDuration = escapeHtml(duration);
                 const posterUrl = getEpisodePoster(ep.videoUrl);
 
                 const epJsonAttr = escapeHtml(JSON.stringify({
                     id: epId,
-                    number: epNumber,
                     duration,
                     priceNLe: Number(ep.priceNLe) || FIXED_PRICE_NLE,
                     summary,
@@ -307,24 +304,24 @@
                 return `
                     <article class="bg-white border border-stone-200/90 rounded-2xl p-4 sm:p-5 space-y-3.5 shadow-sm">
                         <div class="flex items-center justify-between gap-2">
-                            <p class="text-xs font-bold uppercase tracking-wider text-amber-700">
-                                ${safeNumber}${safeDuration ? ` &bull; ${safeDuration}` : ""}
+                            <p class="text-xs font-semibold uppercase tracking-wider text-stone-500">
+                                ${safeDuration ? `Duration &bull; ${safeDuration}` : "Featured Video"}
                             </p>
                             <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full border ${isUnlocked ? "bg-emerald-50 text-emerald-700 border-emerald-200" : "bg-amber-50 text-amber-800 border-amber-200"}">
                                 ${isUnlocked ? "Unlocked" : "Locked"}
                             </span>
                         </div>
 
-                        <p class="text-sm sm:text-[15px] text-stone-800 font-medium leading-snug">${safeSummary}</p>
+                        <p class="text-sm sm:text-[15px] text-stone-900 font-medium leading-relaxed">${safeSummary}</p>
 
                         ${isUnlocked ? renderPlayer(ep) : `
                             <div class="relative aspect-video w-full bg-stone-900 rounded-xl overflow-hidden border border-stone-200 flex items-center justify-center p-4 text-center">
-                                ${posterUrl ? `<img src="${escapeHtml(posterUrl)}" alt="${safeNumber} preview" class="absolute inset-0 w-full h-full object-cover">` : ""}
+                                ${posterUrl ? `<img src="${escapeHtml(posterUrl)}" alt="Video preview" class="absolute inset-0 w-full h-full object-cover">` : ""}
                                 <div class="absolute inset-0 bg-stone-950/55"></div>
                                 <div class="relative z-10 space-y-2.5 w-full max-w-xs">
-                                    <p class="text-xs font-semibold tracking-wide text-white/95">Locked Episode</p>
+                                    <p class="text-xs font-semibold tracking-wide text-white/95">Locked Video</p>
                                     <button type="button" data-episode="${epJsonAttr}" onclick="openUnlockModal(JSON.parse(this.dataset.episode))" class="w-full bg-white hover:bg-stone-100 text-stone-950 py-2.5 px-4 rounded-xl font-bold text-xs transition shadow-sm">
-                                        Unlock ${safeNumber} (NLe ${FIXED_PRICE_NLE})
+                                        Unlock Video (NLe ${FIXED_PRICE_NLE})
                                     </button>
                                 </div>
                             </div>
