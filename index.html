@@ -80,7 +80,7 @@
 
     <script>
         const FIXED_PRICE_NLE = 5;
-        const WHATSAPP_NUMBER = "23276000000";
+        const WHATSAPP_NUMBER = "23276655025";
         const UNLOCK_STORAGE_KEY = "series_cinema_unlocked_v1";
         const CODE_SECRET = "SERIES_CINEMA_KEY_2026";
         const OWNER_PIN = "2537";
@@ -114,7 +114,7 @@
             if (!videoUrl) return "";
             const ytId = extractYouTubeId(videoUrl);
             if (ytId) {
-                return `https://img.youtube.com/vi/${ytId}/hqdefault.jpg`;
+                return "";
             }
             const cleanUrl = String(videoUrl).trim().split("?")[0];
             if (/res\.cloudinary\.com\/.+\/video\/upload\/.+\.(mp4|mov|webm|m4v)$/i.test(cleanUrl)) {
