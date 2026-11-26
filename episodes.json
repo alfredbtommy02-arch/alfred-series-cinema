@@ -6,5 +6,13 @@
     "priceNLe": 5,
     "summary": "Amazing morning",
     "videoUrl": "https://res.cloudinary.com/xecpjwgv/video/upload/v1795626279/video_46ac9120-bb05-4074-b354-6225f48e87ed.mp4"
+  },
+  {
+    "id": "EP5",
+    "number": "Episode 5",
+    "duration": "01:23:23",
+    "priceNLe": 5,
+    "summary": "Lost and Bound — Based on True Events",
+    "videoUrl": "https://youtu.be/0n9kqUAQ_EM"
   }
 ]
