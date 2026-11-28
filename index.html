@@ -26,23 +26,36 @@
 
     <!-- Payment / Unlock Modal -->
     <div id="unlockModal" class="fixed inset-0 bg-stone-950/50 backdrop-blur-[2px] hidden items-center justify-center p-4 z-50">
-        <div class="bg-white border border-stone-200 rounded-2xl max-w-md w-full p-5 sm:p-6 space-y-4 shadow-xl text-stone-900">
+        <div class="bg-white border border-stone-200 rounded-2xl max-w-md w-full p-5 sm:p-6 space-y-4 shadow-xl text-stone-900 max-h-[90vh] overflow-y-auto">
             <div class="flex items-center justify-between border-b border-stone-100 pb-3">
                 <h2 id="modalTitle" class="text-lg font-bold text-stone-900">Unlock Video</h2>
                 <button type="button" onclick="closeUnlockModal()" class="text-stone-400 hover:text-stone-700 text-2xl leading-none px-1">&times;</button>
             </div>
             <p id="modalSummary" class="text-sm text-stone-700 font-medium leading-relaxed"></p>
-            <div class="bg-stone-50 border border-stone-200/80 rounded-xl p-3.5 text-xs text-stone-700 space-y-1.5">
-                <p><strong class="text-stone-900">Price:</strong> NLe <span id="modalPrice">5</span></p>
-                <p>1. Pay NLe <span id="modalPriceStep">5</span> via mobile money / agreed method.</p>
-                <p>2. Send your unlock request on WhatsApp to receive your code.</p>
+
+            <div class="bg-stone-50 border border-stone-200/80 rounded-xl p-3.5 text-xs text-stone-700 space-y-2">
+                <p><strong class="text-stone-900">Amount to Pay:</strong> NLe <span id="modalPrice">5</span></p>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-0.5">
+                    <div class="bg-white border border-amber-200 rounded-lg p-2.5">
+                        <p class="text-[11px] font-bold uppercase tracking-wider text-amber-800">Orange Money</p>
+                        <p id="modalOrangeNumber" class="font-mono text-sm font-bold text-stone-900 mt-0.5"></p>
+                    </div>
+                    <div class="bg-white border border-rose-200 rounded-lg p-2.5">
+                        <p class="text-[11px] font-bold uppercase tracking-wider text-rose-800">AfriMoney</p>
+                        <p id="modalAfriNumber" class="font-mono text-sm font-bold text-stone-900 mt-0.5"></p>
+                    </div>
+                </div>
+                <p class="pt-1">1. Send <strong>NLe <span id="modalPriceStep">5</span></strong> to either Orange Money or AfriMoney above.</p>
+                <p>2. Send your payment confirmation on WhatsApp to receive your unlock code.</p>
                 <p>3. Enter your code below to unlock playback.</p>
             </div>
+
             <div class="space-y-1.5">
                 <label for="unlockCodeInput" class="block text-xs font-semibold text-stone-700">Enter Unlock Code</label>
                 <input id="unlockCodeInput" type="text" placeholder="Paste or type unlock code" class="w-full bg-white border border-stone-300 rounded-xl px-3.5 py-2.5 text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:border-stone-900 focus:ring-2 focus:ring-stone-900/10">
                 <p id="unlockError" class="text-xs text-rose-600 font-medium hidden"></p>
             </div>
+
             <div class="flex flex-col sm:flex-row gap-2.5 pt-1">
                 <button type="button" onclick="verifyUnlockCode()" class="flex-1 bg-amber-600 hover:bg-amber-700 text-white py-2.5 rounded-xl text-sm font-semibold transition shadow-xs">
                     Verify &amp; Unlock
@@ -81,6 +94,8 @@
     <script>
         const FIXED_PRICE_NLE = 5;
         const WHATSAPP_NUMBER = "23276655025";
+        const ORANGE_MONEY_NUMBER = "+23276655025";
+        const AFRIMONEY_NUMBER = "+23290655025";
         const UNLOCK_STORAGE_KEY = "series_cinema_unlocked_v1";
         const CODE_SECRET = "SERIES_CINEMA_KEY_2026";
         const OWNER_PIN = "2537";
@@ -151,7 +166,7 @@
 
         function redirectToWhatsAppForEpisode(summary, priceNLe = FIXED_PRICE_NLE) {
             const text = encodeURIComponent(
-                `Hello Series Cinema, I want to pay NLe ${priceNLe} to unlock "${summary}". Please send my unlock code.`
+                `Hello Series Cinema, I have paid NLe ${priceNLe} (Orange Money / AfriMoney) for "${summary}". Please send my unlock code.`
             );
             const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${text}`;
             window.open(waUrl, "_blank", "noopener,noreferrer");
@@ -164,6 +179,8 @@
             document.getElementById("modalSummary").textContent = episode.summary || "";
             document.getElementById("modalPrice").textContent = price;
             document.getElementById("modalPriceStep").textContent = price;
+            document.getElementById("modalOrangeNumber").textContent = ORANGE_MONEY_NUMBER;
+            document.getElementById("modalAfriNumber").textContent = AFRIMONEY_NUMBER;
             document.getElementById("unlockCodeInput").value = "";
             document.getElementById("unlockError").classList.add("hidden");
             document.getElementById("unlockModal").classList.remove("hidden");
